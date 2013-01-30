@@ -35,36 +35,44 @@ application with Yammer here: <https://www.yammer.com/client_applications>
 
 To authenticate a user of your application:
 
-1. Construct the following URL using the `client_id` you received after
-registering your app with Yammer, and a URI you want Yammer to redirect the user
-to after they've authorized your application:
-`https://www.yammer.com/dialog/oauth?client_id=[:client_id]&redirect_uri=[:redirect_uri]`
+1.  Build a `yampy.Authenticator` using the `client_id` and `client_secret` you
+    were given when you registered your application:
 
-2. Send the user to the URI you constructed above. When they click the "Allow"
-button they will be redirected to the `redirect_uri` you provided, with a `code`
-query string parameter. If they deny your app access, or something else goes
-wrong, there will be an `error` parameter instead, which you should handle.
+        import yampy.Authenticator
 
-3. Use the `code` along with your `client_id` and `client_secret` to construct
-the following URL:
-`https://www.yammer.com/oauth2/access_token.json?client_id=[:client_id]&client_secret=[:client_secret]&code=[:code]`
+        authenticator = yampy.Authenticator(client_id=MY_CLIENT_ID,
+                                            client_secret=MY_CLIENT_SECRET)
 
-4. Fetch the access token using the URL constructed above. The response will be
-a JSON blob containing user and network information, and an access token
-(`"abcdefghijklmn"` in this example):
+2.  Send your user to the authorization URL where they can grant your
+    application access to their Yammer account. You can construct the
+    authorization URL using the `yampy.Authenticator`, specifying the URL you
+    want Yammer to return the user to when they are finished:
 
-        {
-            "user": {
-                ...
-            },
-            "network": {
-                ...
-            },
-            "access_token": {
-                "access_token": "abcdefghijklmn",
-                ...
-            }
-        }
+        return_uri = "http://example.com/auth/callback"
+        auth_url = authenticator.authorization_url(return_uri=return_uri)
+
+3.  Once the user has authorized or denied your application, they will be sent
+    to the `return_uri` you specified. If the user has granted your application
+    permission, a `code` parameter will be given in the query string. If
+    something went wrong an `error` parameter will be passed instead,
+    which you should handle. See the [authentication section of the Yammer API
+    documentation][API-auth] for more information.
+
+    Assuming everything went well, you can use the `yampy.Authenticator` to
+    exchange your `code` for an access token:
+
+        access_token = authenticator.fetch_access_token(code)
+
+    If you require user and network information -- for example, if you want to
+    store the Yammer user ID in your application's user model -- then you can
+    use the `fetch_access_data` method instead:
+
+        access_data = authenticator.fetch_access_data(code)
+
+        access_token = access_data["access_token"]["token"]
+
+        user_info = access_data["user"]
+        network_info = access_data["network"]
 
 ### Making requests
 
@@ -74,7 +82,7 @@ requests to the API:
 ```python
 import yampy.Client
 
-yammer = yampy.Client(access_token="abcdefghijklmn")
+yammer = yampy.Client(access_token=access_token)
 ```
 
 You can also pass the `base_url` keyword argument to change the base URL
@@ -83,7 +91,7 @@ example, in your test suite you might want to run a fake Yammer API server
 locally to speed up your tests:
 
 ```python
-yammer = yampy.Client(access_token="abcdefghijklmn",
+yammer = yampy.Client(access_token=access_token,
                       base_url="http://localhost:5001")
 ```
 
@@ -117,3 +125,5 @@ yammer.post("/messages", body="Check this out",
 To contribute to this project, see the
 [CONTRIBUTING.md](https://github.com/yammer/yam-python/blob/master/CONTRIBUTING.md)
 file.
+
+[API-auth]: https://developer.yammer.com/authentication/
