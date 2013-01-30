@@ -1,0 +1,6 @@
+*.pyc
+*.egg
+dist
+ENV
+MANIFEST
+yampy.egg-info
