@@ -22,7 +22,7 @@ or alternatives. Once we approve, we will merge your branch in.
 
 Some things that will increase the chance that your pull request is accepted:
 
-* Follow PEP 8.
+* Follow [PEP 8](http://www.python.org/dev/peps/pep-0008/).
 * Use Pythonic idioms.
 * Include tests which fail without your code and pass with it.
 * Update the documentation, the surrounding code, examples elsewhere, guides,
@@ -32,7 +32,7 @@ Some things that will increase the chance that your pull request is accepted:
 ## Requirements
 
 Please remember this is open-source, so don't commit any passwords or API keys.
-Those should go in environment variables like.
+Those should go in environment variables.
 
 
 ## Development environment setup
