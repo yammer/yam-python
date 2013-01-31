@@ -4,7 +4,7 @@ Exception classes representing error responses from the Yammer API.
 
 class ResponseError(StandardError):
     """
-    Reaised when the Yammer API responds with an HTTP error, and there
+    Raised when the Yammer API responds with an HTTP error, and there
     isn't a more specific subclass that represents the situation.
     """
     pass
