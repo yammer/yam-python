@@ -11,7 +11,7 @@ class Client(object):
 
     def __init__(self, access_token, base_url=None):
         self.access_token = access_token
-        self.base_url = base_url or "http://www.yammer.com/api/v1"
+        self.base_url = base_url or "https://www.yammer.com/api/v1"
 
     def get(self, path, **kwargs):
         """

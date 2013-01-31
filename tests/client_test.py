@@ -22,15 +22,15 @@ class ClientGetTest(HTTPHelpers, TestCase):
 
         client.get("/messages")
 
-        self.assert_get_request("http://www.yammer.com/api/v1/messages.json")
+        self.assert_get_request("https://www.yammer.com/api/v1/messages.json")
 
     def test_get_uses_custom_base_url(self):
         self.stub_get_requests()
-        client = Client(access_token="1a2bc3", base_url="http://example.com")
+        client = Client(access_token="1a2bc3", base_url="https://example.com")
 
         client.get("/messages")
 
-        self.assert_get_request("http://example.com/messages.json")
+        self.assert_get_request("https://example.com/messages.json")
 
     def test_get_sends_authorization_header(self):
         self.stub_get_requests()
@@ -39,7 +39,7 @@ class ClientGetTest(HTTPHelpers, TestCase):
         client.get("/users/123")
 
         self.assert_get_request(
-            url="http://www.yammer.com/api/v1/users/123.json",
+            url="https://www.yammer.com/api/v1/users/123.json",
             headers={"Authorization": "Bearer abc123"},
         )
 
@@ -50,7 +50,7 @@ class ClientGetTest(HTTPHelpers, TestCase):
         client.get("/users/by_email", email="user@example.com")
 
         self.assert_get_request(
-            url="http://www.yammer.com/api/v1/users/by_email.json",
+            url="https://www.yammer.com/api/v1/users/by_email.json",
             params={"email": "user@example.com"},
         )
 
@@ -104,7 +104,7 @@ class ClientPostTest(HTTPHelpers, TestCase):
 
         client.post("/messages", body="Hello Yammer")
 
-        self.assert_post_request("http://www.yammer.com/api/v1/messages.json")
+        self.assert_post_request("https://www.yammer.com/api/v1/messages.json")
 
     def test_post_uses_custom_base_url(self):
         self.stub_post_requests()
@@ -121,7 +121,7 @@ class ClientPostTest(HTTPHelpers, TestCase):
         client.post("/messages", body="I am authorized")
 
         self.assert_post_request(
-            url="http://www.yammer.com/api/v1/messages.json",
+            url="https://www.yammer.com/api/v1/messages.json",
             headers={"Authorization": "Bearer abc123"},
         )
 
@@ -132,7 +132,7 @@ class ClientPostTest(HTTPHelpers, TestCase):
         client.post("/messages", body="Oh hai")
 
         self.assert_post_request(
-            url="http://www.yammer.com/api/v1/messages.json",
+            url="https://www.yammer.com/api/v1/messages.json",
             params={"body": "Oh hai"},
         )
 
