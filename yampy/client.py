@@ -1,6 +1,9 @@
 import json
 import requests
 
+from errors import ResponseError, NotFoundError, InvalidAccessTokenError, \
+    RateLimitExceededError
+
 class Client(object):
     """
     A client for the Yammer API.
@@ -40,39 +43,12 @@ class Client(object):
 
     def _exception_for_response(self, response):
         if response.status_code == 404:
-            return Client.NotFoundError(response.reason)
+            return NotFoundError(response.reason)
         elif response.status_code == 400 and "OAuthException" in response.text:
-            return Client.InvalidAccessTokenError(response.reason)
+            return InvalidAccessTokenError(response.reason)
         elif response.status_code == 429:
-            return Client.RateLimitExceededError(response.reason)
+            return RateLimitExceededError(response.reason)
         else:
-            return Client.ResponseError("%d error: %s" % (
+            return ResponseError("%d error: %s" % (
                 response.status_code, response.reason,
             ))
-
-    class ResponseError(StandardError):
-        """
-        Reaised when the Yammer API responds with an HTTP error, and there
-        isn't a more specific subclass that represents the situation.
-        """
-        pass
-
-    class NotFoundError(ResponseError):
-        """
-        Raised when the Yammer API responds with an HTTP 404 Not Found error.
-        """
-        pass
-
-    class InvalidAccessTokenError(ResponseError):
-        """
-        Raised when a request is made with an expired or otherwise invalid
-        OAuth access token.
-        """
-        pass
-
-    class RateLimitExceededError(ResponseError):
-        """
-        Raised when a request is rejected because the rate limit has been
-        exceeded.
-        """
-        pass

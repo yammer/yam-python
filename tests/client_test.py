@@ -4,6 +4,7 @@ from mock import Mock, ANY
 import requests
 
 from yampy import Client
+from yampy.errors import *
 
 class ClientTest(TestCase):
     def test_get_parses_response_json(self):
@@ -66,26 +67,25 @@ class ClientTest(TestCase):
         )
         client = Client(access_token="456efg")
 
-        self.assertRaises(Client.InvalidAccessTokenError,
-                          client.get, "/messages")
+        self.assertRaises(InvalidAccessTokenError, client.get, "/messages")
 
     def test_get_handles_rate_limit(self):
         self._stub_get_requests(response_status=429)
         client = Client(access_token="abc")
 
-        self.assertRaises(Client.RateLimitExceededError, client.get, "/user/1")
+        self.assertRaises(RateLimitExceededError, client.get, "/user/1")
 
     def test_get_handles_404_responses(self):
         self._stub_get_requests(response_status=404)
         client = Client(access_token="456efg")
 
-        self.assertRaises(Client.NotFoundError, client.get, "/not/real")
+        self.assertRaises(NotFoundError, client.get, "/not/real")
 
     def test_get_handles_unexpected_http_responses(self):
         self._stub_get_requests(response_status=500)
         client = Client(access_token="abcdef")
 
-        self.assertRaises(Client.ResponseError, client.get, "/messages")
+        self.assertRaises(ResponseError, client.get, "/messages")
 
     def _stub_get_requests(self, response_body="{}", response_status=200):
         mock_response = Mock(
