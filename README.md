@@ -38,7 +38,7 @@ To authenticate a user of your application:
 1.  Build a `yampy.Authenticator` using the `client_id` and `client_secret` you
     were given when you registered your application:
 
-        import yampy.Authenticator
+        import yampy
 
         authenticator = yampy.Authenticator(client_id=MY_CLIENT_ID,
                                             client_secret=MY_CLIENT_SECRET)
@@ -80,7 +80,7 @@ Once you have an access token you can create a `yampy.Client` and start making
 requests to the API:
 
 ```python
-import yampy.Client
+import yampy
 
 yammer = yampy.Client(access_token=access_token)
 ```
