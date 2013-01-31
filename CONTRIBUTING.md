@@ -56,11 +56,18 @@ When you're finished, deactivate the virtualenv:
 
 Run the whole test suite with:
 
-    python setup.py test
+    python setup.py test -s tests
 
-Run individual test modules like:
+Run individual test modules or classes with:
 
-    python setup.py test -s tests.some_test_file
+    python setup.py test -s tests.client_test
+    python setup.py test -s tests.client_test.ClientGetTest
+
+Run the live integration tests with (as the name suggests these tests make
+calls to the live API, so don't use an access token for an account that you
+care about):
+
+    YAMMER_ACCESS_TOKEN=abc123xyz python setup.py test -s tests.live_integration_test
 
 
 ## Development process
