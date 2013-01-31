@@ -151,6 +151,17 @@ class ClientPostTest(HTTPHelpers, TestCase):
         self.assertRaises(InvalidAccessTokenError, client.post, "/messages",
                           body="No more token")
 
+    def test_post_handles_201_created(self):
+        self.stub_post_requests(
+            response_status=201,
+            response_body='{"status": "OK"}',
+        )
+        client = Client(access_token="456efg")
+
+        response = client.post("/messages", body="A-OK")
+
+        self.assertEqual(response, {"status": "OK"})
+
     def test_post_handles_rate_limit(self):
         self.stub_post_requests(response_status=429)
         client = Client(access_token="abc")
@@ -165,7 +176,7 @@ class ClientPostTest(HTTPHelpers, TestCase):
         self.assertRaises(NotFoundError, client.post, "/not/real")
 
     def test_post_handles_unexpected_http_responses(self):
-        self.stub_post_requests(response_status=500)
+        self.stub_post_requests(response_status=122)
         client = Client(access_token="abcdef")
 
         self.assertRaises(ResponseError, client.post, "/messages",

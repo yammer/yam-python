@@ -49,7 +49,7 @@ class Client(object):
         }
 
     def _parse_response(self, response):
-        if response.status_code == 200:
+        if 200 <= response.status_code < 300:
             return json.loads(response.text)
         else:
             raise self._exception_for_response(response)
