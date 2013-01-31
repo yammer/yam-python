@@ -5,7 +5,7 @@ from support import HTTPHelpers
 from yampy import Client
 from yampy.errors import *
 
-class ClientGetTest(TestCase, HTTPHelpers):
+class ClientGetTest(HTTPHelpers, TestCase):
     def test_get_parses_response_json(self):
         self.stub_get_requests(
             response_body='{"messages": ["first", "second"]}',
@@ -87,7 +87,7 @@ class ClientGetTest(TestCase, HTTPHelpers):
         self.assertRaises(ResponseError, client.get, "/messages")
 
 
-class ClientPostTest(TestCase, HTTPHelpers):
+class ClientPostTest(HTTPHelpers, TestCase):
     def test_post_parses_response_json(self):
         self.stub_post_requests(
             response_body='{"messages": ["first", "second"]}',

@@ -11,6 +11,12 @@ class HTTPHelpers(object):
     the correct tests were made.
     """
 
+    def setUp(self):
+        self.__original_request_method = requests.request
+
+    def tearDown(self):
+        requests.request = self.__original_request_method
+
     def stub_get_requests(self, response_body="{}", response_status=200):
         mock_response = Mock(
             text=response_body,
