@@ -20,7 +20,20 @@ class Client(object):
 
         The path should be the path of an API endpoint, e.g. "/messages"
         """
-        response = requests.get(
+        return self._request("get", path, **kwargs)
+
+    def post(self, path, **kwargs):
+        """
+        Makes an HTTP POST request to the Yammer API. Any keyword arguments
+        will be sent as the body of the request.
+
+        The path should be the path of an API endpoint, e.g. "/messages"
+        """
+        return self._request("post", path, **kwargs)
+
+    def _request(self, method, path, **kwargs):
+        response = requests.request(
+            method=method,
             url=self._build_url(path),
             headers=self._build_headers(),
             params=kwargs,
