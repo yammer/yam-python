@@ -1,10 +1,8 @@
-from unittest import TestCase
-
-from support import HTTPHelpers
-
 import json
+from unittest import TestCase
 from urlparse import urlparse, parse_qs
 
+from support import HTTPHelpers
 from yampy import Authenticator
 from yampy.errors import *
 

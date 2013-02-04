@@ -1,4 +1,5 @@
 import json
+
 import requests
 
 from constants import DEFAULT_BASE_URL

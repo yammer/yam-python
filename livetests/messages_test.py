@@ -6,7 +6,6 @@ from datetime import datetime
 from unittest import TestCase
 
 from support import skip_without_environment_variable
-
 import yampy
 
 

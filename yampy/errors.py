@@ -9,11 +9,13 @@ class ResponseError(StandardError):
     """
     pass
 
+
 class NotFoundError(ResponseError):
     """
     Raised when the Yammer API responds with an HTTP 404 Not Found error.
     """
     pass
+
 
 class UnauthorizedError(ResponseError):
     """
@@ -22,12 +24,14 @@ class UnauthorizedError(ResponseError):
     """
     pass
 
+
 class InvalidAccessTokenError(ResponseError):
     """
     Raised when a request is made with an access token that has expired or has
     been revoked by the user.
     """
     pass
+
 
 class RateLimitExceededError(ResponseError):
     """
