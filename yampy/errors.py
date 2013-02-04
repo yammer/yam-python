@@ -24,8 +24,8 @@ class UnauthorizedError(ResponseError):
 
 class InvalidAccessTokenError(ResponseError):
     """
-    Raised when a request is made with an expired or otherwise invalid
-    OAuth access token.
+    Raised when a request is made with an access token that has expired or has
+    been revoked by the user.
     """
     pass
 
