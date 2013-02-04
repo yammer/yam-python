@@ -3,7 +3,7 @@ import requests
 
 from constants import DEFAULT_BASE_URL
 from errors import ResponseError, NotFoundError, InvalidAccessTokenError, \
-    RateLimitExceededError
+    RateLimitExceededError, UnauthorizedError
 
 class Client(object):
     """
@@ -60,6 +60,8 @@ class Client(object):
             return NotFoundError(response.reason)
         elif response.status_code == 400 and "OAuthException" in response.text:
             return InvalidAccessTokenError(response.reason)
+        elif response.status_code == 401:
+            return UnauthorizedError(response.reason)
         elif response.status_code == 429:
             return RateLimitExceededError(response.reason)
         else:

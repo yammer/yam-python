@@ -68,6 +68,12 @@ class ClientGetTest(HTTPHelpers, TestCase):
 
         self.assertRaises(InvalidAccessTokenError, client.get, "/messages")
 
+    def test_get_handles_unauthorized_responses(self):
+        self.stub_get_requests(response_status=401)
+        client = Client(access_token="456efg")
+
+        self.assertRaises(UnauthorizedError, client.get, "/messages")
+
     def test_get_handles_rate_limit_error_responses(self):
         self.stub_get_requests(response_status=429)
         client = Client(access_token="abc")
