@@ -15,6 +15,7 @@ setup(
     description="The official Python client for Yammer's API",
     long_description=readme(),
     packages=["yampy"],
+    install_requires=["requests"],
     license="Apache",
     url="http://github.com/yammer/yam-python",
     classifiers=[
@@ -22,6 +23,6 @@ setup(
         "License :: OSI Approved :: Apache Software License",
     ],
 
-    tests_require=["nose"],
+    tests_require=["nose", "mock"],
     test_suite="nose.collector",
 )
