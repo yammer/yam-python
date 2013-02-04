@@ -54,7 +54,7 @@ class ClientGetTest(HTTPHelpers, TestCase):
             params={"email": "user@example.com"},
         )
 
-    def test_handle_invalid_access_token_responses(self):
+    def test_get_handles_invalid_access_token_responses(self):
         self.stub_get_requests(
             response_status=400,
             response_body="""{
@@ -68,13 +68,13 @@ class ClientGetTest(HTTPHelpers, TestCase):
 
         self.assertRaises(InvalidAccessTokenError, client.get, "/messages")
 
-    def test_get_handles_rate_limit(self):
+    def test_get_handles_rate_limit_error_responses(self):
         self.stub_get_requests(response_status=429)
         client = Client(access_token="abc")
 
         self.assertRaises(RateLimitExceededError, client.get, "/user/1")
 
-    def test_get_handles_404_responses(self):
+    def test_get_handles_not_found_responses(self):
         self.stub_get_requests(response_status=404)
         client = Client(access_token="456efg")
 
@@ -136,7 +136,7 @@ class ClientPostTest(HTTPHelpers, TestCase):
             params={"body": "Oh hai"},
         )
 
-    def test_handle_invalid_access_token_responses(self):
+    def test_post_handles_invalid_access_token_responses(self):
         self.stub_post_requests(
             response_status=400,
             response_body="""{
@@ -151,7 +151,7 @@ class ClientPostTest(HTTPHelpers, TestCase):
         self.assertRaises(InvalidAccessTokenError, client.post, "/messages",
                           body="No more token")
 
-    def test_post_handles_201_created(self):
+    def test_post_handles_created_responses(self):
         self.stub_post_requests(
             response_status=201,
             response_body='{"status": "OK"}',
@@ -162,14 +162,14 @@ class ClientPostTest(HTTPHelpers, TestCase):
 
         self.assertEqual(response, {"status": "OK"})
 
-    def test_post_handles_rate_limit(self):
+    def test_post_handles_rate_limit_error_responses(self):
         self.stub_post_requests(response_status=429)
         client = Client(access_token="abc")
 
         self.assertRaises(RateLimitExceededError, client.post, "/messages",
                           body="Do I talk too much?")
 
-    def test_post_handles_404_responses(self):
+    def test_post_handles_not_found_responses(self):
         self.stub_post_requests(response_status=404)
         client = Client(access_token="456efg")
 
