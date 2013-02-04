@@ -43,6 +43,17 @@ class ClientGetTest(HTTPHelpers, TestCase):
             headers={"Authorization": "Bearer abc123"},
         )
 
+    def test_get_does_not_send_authorization_header_with_no_token(self):
+        self.stub_get_requests()
+        client = Client(access_token=None)
+
+        client.get("/messages")
+
+        self.assert_get_request(
+            url="https://www.yammer.com/api/v1/messages.json",
+            headers={},
+        )
+
     def test_get_sends_query_string_parameters(self):
         self.stub_get_requests()
         client = Client(access_token="456efg")
