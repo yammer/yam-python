@@ -1,5 +1,6 @@
 from urllib import urlencode
 
+from constants import DEFAULT_OAUTH_BASE_URL, DEFAULT_OAUTH_DIALOG_URL
 from client import Client
 from errors import ResponseError
 
@@ -27,10 +28,11 @@ class Authenticator(object):
         redirected to the redirect_uri you provide with a code that can be
         exchanged for an access token.
         """
-        return "https://www.yammer.com/dialog/oauth?%s" % urlencode({
+        query = urlencode({
             "client_id": self.client_id,
             "redirect_uri": redirect_uri,
         })
+        return "?".join([DEFAULT_OAUTH_DIALOG_URL, query])
 
     def fetch_access_data(self, code):
         """
@@ -43,7 +45,7 @@ class Authenticator(object):
         If you only intend to make use of the token, you should use the
         fetch_access_token method instead.
         """
-        client = Client(base_url="https://www.yammer.com/oauth2")
+        client = Client(base_url=DEFAULT_OAUTH_BASE_URL)
         return client.get(
             path="/access_token",
             client_id=self.client_id,
