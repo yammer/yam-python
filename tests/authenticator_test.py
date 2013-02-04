@@ -12,7 +12,7 @@ class AuthenticatorAuthorizationUrlTest(TestCase):
     def setUp(self):
         authenticator = Authenticator(client_id="foo", client_secret="bar")
         auth_url = authenticator.authorization_url(
-            return_uri="http://example.com/auth/callback"
+            redirect_uri="http://example.com/auth/callback"
         )
         self.auth_url_parts = urlparse(auth_url)
 
@@ -26,7 +26,7 @@ class AuthenticatorAuthorizationUrlTest(TestCase):
     def test_authorization_url_has_the_expected_parameters(self):
         expected_params = {
             "client_id": ["foo"],
-            "return_uri": ["http://example.com/auth/callback"],
+            "redirect_uri": ["http://example.com/auth/callback"],
         }
         params = parse_qs(self.auth_url_parts.query)
         self.assertEqual(expected_params, params)

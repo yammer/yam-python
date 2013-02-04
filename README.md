@@ -48,11 +48,11 @@ To authenticate a user of your application:
     authorization URL using the `yampy.Authenticator`, specifying the URL you
     want Yammer to return the user to when they are finished:
 
-        return_uri = "http://example.com/auth/callback"
-        auth_url = authenticator.authorization_url(return_uri=return_uri)
+        redirect_uri = "http://example.com/auth/callback"
+        auth_url = authenticator.authorization_url(redirect_uri=redirect_uri)
 
 3.  Once the user has authorized or denied your application, they will be sent
-    to the `return_uri` you specified. If the user has granted your application
+    to the `redirect_uri` you specified. If the user has granted your application
     permission, a `code` parameter will be given in the query string. If
     something went wrong an `error` parameter will be passed instead,
     which you should handle. See the [authentication section of the Yammer API
