@@ -1,5 +1,8 @@
 from urllib import urlencode
 
+from client import Client
+from errors import ResponseError
+
 class Authenticator(object):
     """
     Responsible for authenticating users against the Yammer API.
@@ -15,6 +18,7 @@ class Authenticator(object):
 
     def __init__(self, client_id, client_secret):
         self.client_id = client_id
+        self.client_secret = client_secret
 
     def authorization_url(self, return_uri):
         """
@@ -27,3 +31,32 @@ class Authenticator(object):
             "client_id": self.client_id,
             "return_uri": return_uri,
         })
+
+    def fetch_access_data(self, code):
+        """
+        Returns the complete response from the Yammer API access token request.
+        This is a dict with "user", "network" and "access_token" keys.
+
+        You can access the token itself as:
+            response["access_token"]["token"]
+
+        If you only intend to make use of the token, you should use the
+        fetch_access_token method instead.
+        """
+        client = Client(base_url="https://www.yammer.com/oauth2")
+        return client.get(
+            path="/access_token",
+            client_id=self.client_id,
+            client_secret=self.client_secret,
+            code=code,
+        )
+
+    def fetch_access_token(self, code):
+        """
+        Exchanges the given code for an access token.
+        """
+        access_data = self.fetch_access_data(code)
+        try:
+            return access_data["access_token"]["token"]
+        except KeyError:
+            raise ResponseError("Unexpected response format")
