@@ -1,7 +1,5 @@
 """
-Tests integration with the live Yammer API. These tests require a
-YAMMER_ACCESS_TOKEN environment variable to run. Please note that they will
-post real messages, so don't authenticate an account you really care about.
+Tests for posting and reading messages.
 """
 
 from datetime import datetime

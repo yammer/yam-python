@@ -63,11 +63,13 @@ Run individual test modules or classes with:
     python setup.py test -s tests.client_test
     python setup.py test -s tests.client_test.ClientGetTest
 
-Run the live integration tests with (as the name suggests these tests make
-calls to the live API, so don't use an access token for an account that you
-care about):
+There is also a live integration test suite. This shouldn't be run frequently
+during development, but is useful for checking that the assumptions made in the
+client still match the live API. Since it is run against the live API and posts
+real messages, it requires an access token and shouldn't be run against an
+account that you are actively using. Run the live integration tests with:
 
-    YAMMER_ACCESS_TOKEN=abc123xyz python setup.py test -s tests.live_integration_test
+    YAMMER_ACCESS_TOKEN=abc123xyz python setup.py test -s livetests
 
 
 ## Development process
