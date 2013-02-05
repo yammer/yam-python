@@ -1,4 +1,5 @@
 import json
+
 import requests
 
 from constants import DEFAULT_BASE_URL
@@ -10,9 +11,9 @@ class Client(object):
     A client for the Yammer API.
     """
 
-    def __init__(self, access_token, base_url=None):
-        self.access_token = access_token
-        self.base_url = base_url or DEFAULT_BASE_URL
+    def __init__(self, access_token=None, base_url=None):
+        self._access_token = access_token
+        self._base_url = base_url or DEFAULT_BASE_URL
 
     def get(self, path, **kwargs):
         """
@@ -42,12 +43,15 @@ class Client(object):
         return self._parse_response(response)
 
     def _build_url(self, path):
-        return self.base_url + path + ".json"
+        return self._base_url + path + ".json"
 
     def _build_headers(self):
-        return {
-            "Authorization": "Bearer %s" % self.access_token,
-        }
+        if self._access_token:
+            return {
+                "Authorization": "Bearer %s" % self._access_token,
+            }
+        else:
+            return {}
 
     def _parse_response(self, response):
         if 200 <= response.status_code < 300:
