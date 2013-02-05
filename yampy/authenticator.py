@@ -18,6 +18,11 @@ class Authenticator(object):
     """
 
     def __init__(self, client_id, client_secret):
+        """
+        Initializes a new Authenticator. The client_id and client_secret
+        identify your application, you acquire them when registering your
+        application with Yammer. See http://www.yammer.com/client_applications
+        """
         self.client_id = client_id
         self.client_secret = client_secret
 
@@ -55,7 +60,12 @@ class Authenticator(object):
 
     def fetch_access_token(self, code):
         """
-        Exchanges the given code for an access token.
+        Convenience method to exchange a code for an access token, discarding
+        the other user and network data that the Yammer API returns with the
+        access token.
+
+        If you require user and network information, you should use the
+        fetch_access_data method instead.
         """
         access_data = self.fetch_access_data(code)
         try:
