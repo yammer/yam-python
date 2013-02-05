@@ -24,6 +24,6 @@ setup(
         "License :: OSI Approved :: Apache Software License",
     ],
 
-    tests_require=["nose", "mock"],
+    tests_require=["nose", "mock", "flask"],
     test_suite="nose.collector",
 )
