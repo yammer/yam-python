@@ -7,27 +7,51 @@ from yampy import Authenticator
 from yampy.errors import *
 
 class AuthenticatorAuthorizationUrlTest(TestCase):
-    def setUp(self):
-        authenticator = Authenticator(client_id="foo", client_secret="bar")
-        auth_url = authenticator.authorization_url(
-            redirect_uri="http://example.com/auth/callback"
+    def test_authorization_url_using_the_default_oauth_dialog_url(self):
+        authenticator = Authenticator(
+            client_id="foo",
+            client_secret="bar",
         )
-        self.auth_url_parts = urlparse(auth_url)
+        auth_url_parts, params = self.parsed_authorization_url(authenticator)
 
-    def test_authorization_url_uses_https(self):
-        self.assertEqual("https", self.auth_url_parts.scheme)
+        self.assertEqual("https", auth_url_parts.scheme)
+        self.assertEqual("www.yammer.com", auth_url_parts.netloc)
+        self.assertEqual("/dialog/oauth", auth_url_parts.path)
+        self.assertEqual(
+            {
+                "client_id": ["foo"],
+                "redirect_uri": ["http://example.com/auth/callback"],
+            },
+            params,
+        )
 
-    def test_authorization_url_has_the_expected_address(self):
-        self.assertEqual("www.yammer.com", self.auth_url_parts.netloc)
-        self.assertEqual("/dialog/oauth", self.auth_url_parts.path)
+    def test_authorization_url_can_use_a_custom_oauth_dialog_url(self):
+        authenticator = Authenticator(
+            client_id="my-client-id",
+            client_secret="bar",
+            oauth_dialog_url="http://example.com/test/dialog",
+        )
+        auth_url_parts, params = self.parsed_authorization_url(authenticator)
 
-    def test_authorization_url_has_the_expected_parameters(self):
-        expected_params = {
-            "client_id": ["foo"],
-            "redirect_uri": ["http://example.com/auth/callback"],
-        }
-        params = parse_qs(self.auth_url_parts.query)
-        self.assertEqual(expected_params, params)
+        self.assertEqual("http", auth_url_parts.scheme)
+        self.assertEqual("example.com", auth_url_parts.netloc)
+        self.assertEqual("/test/dialog", auth_url_parts.path)
+        self.assertEqual(
+            {
+                "client_id": ["my-client-id"],
+                "redirect_uri": ["http://example.com/auth/callback"],
+            },
+            params,
+        )
+
+    def parsed_authorization_url(self, authenticator):
+        auth_url = authenticator.authorization_url(
+            redirect_uri="http://example.com/auth/callback",
+        )
+        auth_url_parts = urlparse(auth_url)
+        params = parse_qs(auth_url_parts.query)
+
+        return (auth_url_parts, params)
 
 
 class AuthenticatorFetchAccessDataTest(HTTPHelpers, TestCase):
@@ -47,6 +71,18 @@ class AuthenticatorFetchAccessDataTest(HTTPHelpers, TestCase):
             },
         )
         self.assertEqual(self.valid_response_data, response_data)
+
+    def test_fetch_access_data_can_use_a_custom_oauth_url(self):
+        self.stub_get_requests(response_body=self.valid_response_json)
+        authenticator = Authenticator(
+            client_id="foo",
+            client_secret="bar",
+            oauth_base_url="http://example.com/oauth",
+        )
+
+        authenticator.fetch_access_data("some-code")
+
+        self.assert_get_request("http://example.com/oauth/access_token.json")
 
     @property
     def valid_response_data(self):

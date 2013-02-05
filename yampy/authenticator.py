@@ -17,14 +17,26 @@ class Authenticator(object):
        method.
     """
 
-    def __init__(self, client_id, client_secret):
+    def __init__(self, client_id, client_secret,
+                 oauth_dialog_url=None, oauth_base_url=None):
         """
         Initializes a new Authenticator. The client_id and client_secret
         identify your application, you acquire them when registering your
         application with Yammer. See http://www.yammer.com/client_applications
+
+        Keyword arguments can be used to modify the URLs generated in this
+        class, e.g. to avoid hitting the live API from a client application's
+        test suite. Pass None to use the default URLs.
+
+        oauth_dialog_url -- The URL the user must visit to authorize the
+            application. Used by the authorization_url method.
+        oauth_base_url -- The base URL for OAuth API requests, e.g. token
+            exchange. Used by fetch_access_data or fetch_access_token.
         """
         self.client_id = client_id
         self.client_secret = client_secret
+        self.oauth_dialog_url = oauth_dialog_url or DEFAULT_OAUTH_DIALOG_URL
+        self.oauth_base_url = oauth_base_url or DEFAULT_OAUTH_BASE_URL
 
     def authorization_url(self, redirect_uri):
         """
@@ -37,7 +49,7 @@ class Authenticator(object):
             "client_id": self.client_id,
             "redirect_uri": redirect_uri,
         })
-        return "?".join([DEFAULT_OAUTH_DIALOG_URL, query])
+        return "?".join([self.oauth_dialog_url, query])
 
     def fetch_access_data(self, code):
         """
@@ -50,7 +62,7 @@ class Authenticator(object):
         If you only intend to make use of the token, you should use the
         fetch_access_token method instead.
         """
-        client = Client(base_url=DEFAULT_OAUTH_BASE_URL)
+        client = Client(base_url=self.oauth_base_url)
         return client.get(
             path="/access_token",
             client_id=self.client_id,
