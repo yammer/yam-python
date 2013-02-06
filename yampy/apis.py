@@ -1,3 +1,86 @@
+from errors import InvalidOpenGraphObjectError, TooManyTopicsError
+
+
+class ArgumentDict(object):
+    """
+    A dictionary of arguments for an API call. As arguments are added they
+    are converted to the type expected by the Yammer API.
+
+    Booleans will be converted to strings:
+
+        args["yes"] = True
+        args["no"] = False
+
+        args["yes"] is "true"
+        args["no"] is "false"
+
+    Lists and tuples will be split over multiple keys:
+
+        args["topic"] == ("first", "second",)
+
+        args["topic1"] is "first"
+        args["topic2"] is "second"
+
+    Dicts will be expanded:
+
+        args["og"] = {"url": "http://example.com", "type": "example"}
+
+        args["og_url"] is "http://example.com"
+        args["og_type"] is "example"
+
+    None will be discarded:
+
+        args["null"] = None
+
+        args["null"] # will raise a KeyError
+    """
+
+    def __init__(self, **kwargs):
+        """
+        Initializes a new argument dict. Keyword arguments will be added to
+        the dict after being subjected to the usual conversions.
+        """
+        self._arguments = {}
+        for key, value in kwargs.items():
+            self[key] = value
+
+    def keys(self):
+        return self._arguments.keys()
+
+    def __setitem__(self, key, value):
+        if isinstance(value, dict):
+            self._add_dict(key, value)
+        elif isinstance(value, (list, tuple)):
+            self._add_list(key, value)
+        else:
+            self._add_value(key, value)
+
+    def __getitem__(self, key):
+        return self._arguments[key]
+
+    def _add_value(self, key, value):
+        if value is not None:
+            self._arguments[key] = self._convert_value(value)
+
+    def _add_list(self, key, values):
+        for index, value in enumerate(values):
+            item_key = "%s%d" % (key, index + 1)
+            self._arguments[item_key] = self._convert_value(value)
+
+    def _add_dict(self, prefix, values):
+        for key, value in values.items():
+            item_key = "%s_%s" % (prefix, key)
+            self._arguments[item_key] = self._convert_value(value)
+
+    def _convert_value(self, value):
+        if value is True:
+            return "true"
+        elif value is False:
+            return "false"
+        else:
+            return value
+
+
 class MessagesAPI(object):
     """
     Provides an interface for accessing the message related endpoints of the
@@ -24,13 +107,12 @@ class MessagesAPI(object):
             thread, or to "extended" to recieve the first and two newest
             messages from each thread.
         """
-        return self._get(
-            "/messages",
+        return self._client.get("/messages", **ArgumentDict(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
             threaded=threaded,
-        )
+        ))
 
     def from_my_feed(self, older_than=None, newer_than=None,
                      limit=None, threaded=None):
@@ -41,13 +123,12 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        return self._get(
-            "/messages/my_feed",
+        return self._client.get("/messages/my_feed", **ArgumentDict(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
             threaded=threaded,
-        )
+        ))
 
     def from_top_conversations(self, older_than=None, newer_than=None,
                                limit=None, threaded=None):
@@ -56,13 +137,12 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        return self._get(
-            "/messages/algo",
+        return self._client.get("/messages/algo", **ArgumentDict(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
             threaded=threaded,
-        )
+        ))
 
     def from_followed_conversations(self, older_than=None, newer_than=None,
                                     limit=None, threaded=None):
@@ -72,13 +152,12 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        return self._get(
-            "/messages/following",
+        return self._client.get("/messages/following", **ArgumentDict(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
             threaded=threaded,
-        )
+        ))
 
     def sent(self, older_than=None, newer_than=None,
              limit=None, threaded=None):
@@ -87,13 +166,12 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        return self._get(
-            "/messages/sent",
+        return self._client.get("/messages/sent", **ArgumentDict(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
             threaded=threaded,
-        )
+        ))
 
     def private(self, older_than=None, newer_than=None,
                 limit=None, threaded=None):
@@ -102,13 +180,12 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        return self._get(
-            "/messages/private",
+        return self._client.get("/messages/private", **ArgumentDict(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
             threaded=threaded,
-        )
+        ))
 
     def received(self, older_than=None, newer_than=None,
                  limit=None, threaded=None):
@@ -117,14 +194,9 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        return self._get(
-            "/messages/received",
+        return self._client.get("/messages/received", **ArgumentDict(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
             threaded=threaded,
-        )
-
-    def _get(self, path, **kwargs):
-        filtered_kwargs = {k: v for (k, v) in kwargs.items() if v is not None}
-        return self._client.get(path, **filtered_kwargs)
+        ))
