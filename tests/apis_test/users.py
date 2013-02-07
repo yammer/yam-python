@@ -90,3 +90,58 @@ class UsersAPIFindTest(TestCase):
             email="user@example.org",
         )
         self.assertEquals(self.mock_get_response, found_user)
+
+
+class UsersAPICreateTest(TestCase):
+    def setUp(self):
+        self.mock_post_response = Mock()
+        self.mock_client = Mock()
+        self.mock_client.post.return_value = self.mock_post_response
+        self.users_api = UsersAPI(client=self.mock_client)
+
+    def test_create_simple_user(self):
+        created_user = self.users_api.create("user@example.com")
+
+        self.mock_client.post.assert_called_once_with(
+            "/users",
+            email="user@example.com",
+        )
+        self.assertEquals(self.mock_post_response, created_user)
+
+    def test_create_complex_user(self):
+        created_user = self.users_api.create(
+            email_address="someone@example.org",
+            full_name="John Doe",
+            job_title="Developer",
+            location="Stockholm, Sweden",
+            im={
+                "provider": "gtalk",
+                "username": "someone@gmail.example.com",
+            },
+            work_telephone="+46123123123",
+            work_extension="123",
+            mobile_telephone="+46789789789",
+            significant_other="Jane",
+            kids_names="Tom, Dick and Harry",
+            interests="Programming, testing",
+            summary="Zaphod's just this guy, y'know?",
+            expertise="Work and stuff",
+        )
+
+        self.mock_client.post.assert_called_once_with(
+            "/users",
+            email="someone@example.org",
+            full_name="John Doe",
+            job_title="Developer",
+            location="Stockholm, Sweden",
+            im_provider="gtalk",
+            im_username="someone@gmail.example.com",
+            work_telephone="+46123123123",
+            work_extension="123",
+            mobile_telephone="+46789789789",
+            significant_other="Jane",
+            kids_names="Tom, Dick and Harry",
+            interests="Programming, testing",
+            summary="Zaphod's just this guy, y'know?",
+            expertise="Work and stuff",
+        )

@@ -59,3 +59,32 @@ class UsersAPI(object):
         return self._client.get("/users/by_email", **ArgumentDict(
             email=email_address,
         ))
+
+    def create(self, email_address, full_name=None, job_title=None,
+               location=None, im=None, work_telephone=None, work_extension=None,
+               mobile_telephone=None, significant_other=None, kids_names=None,
+               interests=None, summary=None, expertise=None):
+        """
+        Creates a new user.
+
+        Most of the parameter names are self explanatory, and accept strings. A
+        few expect specific formats:
+        im -- Provide instant messages details as a dict with "provider" and
+            "username" keys, e.g.
+            {"provider": "gtalk", "username": "me@gmail.com"}
+        """
+        return self._client.post("/users", **ArgumentDict(
+            email=email_address,
+            full_name=full_name,
+            job_title=job_title,
+            location=location,
+            im=im,
+            work_telephone=work_telephone,
+            work_extension=work_extension,
+            mobile_telephone=mobile_telephone,
+            significant_other=significant_other,
+            kids_names=kids_names,
+            interests=interests,
+            summary=summary,
+            expertise=expertise,
+        ))

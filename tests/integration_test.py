@@ -79,3 +79,18 @@ class UserIntegrationTest(TestCaseWithFakeYammerServer):
 
         user_by_id = self.yammer.users.find(13)
         self.assertEqual(13, user_by_id["id"])
+
+    def test_creating_a_user(self):
+        user_result = self.yammer.users.create(
+            email_address="john.doe@example.com",
+            full_name="John Doe",
+            education=[
+                {
+                    "school": "Manchester University",
+                    "degree": "BSc",
+                    "description": "Computer Science",
+                    "start_year": "2002",
+                    "end_year": "2005",
+                },
+            ],
+        )
