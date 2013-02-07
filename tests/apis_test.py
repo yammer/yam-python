@@ -1,7 +1,8 @@
 from mock import Mock
 from unittest import TestCase
 
-from yampy.apis import ArgumentDict, MessagesAPI
+from yampy.apis.utils import ArgumentDict
+from yampy.apis import MessagesAPI
 from yampy.errors import InvalidOpenGraphObjectError, TooManyTopicsError
 
 
