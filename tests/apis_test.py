@@ -151,6 +151,14 @@ class MessagesAPIMessageListFetchingTest(TestCase):
             self.mock_client.get.assert_called_with("/messages/received", **kwargs)
             self.assertEquals(self.mock_get_response, messages)
 
+    def test_in_thread(self):
+        for kwargs in self.valid_message_list_arguments:
+            messages = self.messages_api.in_thread(12345, **kwargs)
+
+            self.mock_client.get.assert_called_with("/messages/in_thread/12345",
+                                                    **kwargs)
+            self.assertEquals(self.mock_get_response, messages)
+
     @property
     def valid_message_list_arguments(self):
         return (
