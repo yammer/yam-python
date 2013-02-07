@@ -42,3 +42,9 @@ class MessageIntegrationTest(TestCaseWithFakeYammerServer):
         message = message_result["messages"][0]
 
         self.assertEqual("Hello everyone!", message["body"]["plain"])
+
+    def test_deleting_a_message(self):
+        message_result = self.yammer.messages.all()
+        msg_id = message_result["messages"][0]["id"]
+
+        deletion_result = self.yammer.messages.delete(msg_id)

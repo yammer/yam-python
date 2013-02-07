@@ -223,3 +223,9 @@ class MessagesAPI(object):
             broadcast=broadcast,
             og=open_graph_object,
         ))
+
+    def delete(self, message_id):
+        """
+        Deletes the message identified by message_id.
+        """
+        return self._client.delete("/messages/%d" % message_id)

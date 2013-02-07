@@ -251,3 +251,17 @@ class MessagesAPICreateTest(TestCase):
                     "fetch": True,
                 },
             )
+
+
+class MessagesAPIDeleteTest(TestCase):
+    def setUp(self):
+        self.mock_delete_response = Mock()
+        self.mock_client = Mock()
+        self.mock_client.delete.return_value = self.mock_delete_response
+        self.messages_api = MessagesAPI(client=self.mock_client)
+
+    def test_delete(self):
+        response = self.messages_api.delete(3)
+
+        self.mock_client.delete.assert_called_once_with("/messages/3")
+        self.assertEquals(self.mock_delete_response, response)

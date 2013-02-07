@@ -197,3 +197,99 @@ class ClientPostTest(HTTPHelpers, TestCase):
 
         self.assertRaises(ResponseError, client.post, "/messages",
                           body="BOOM!")
+
+
+class ClientDeleteTest(HTTPHelpers, TestCase):
+    def test_delete_parses_response_json(self):
+        self.stub_delete_requests(
+            response_body='{"deleted": true}',
+        )
+        client = Client(access_token="abc123")
+
+        response = client.delete("/messages/1")
+
+        self.assertEqual(response, {"deleted": True})
+
+    def test_delete_handles_success_with_a_blank_body(self):
+        self.stub_delete_requests(response_status=200, response_body="")
+        client = Client(access_token="foobar")
+
+        response = client.delete("/messages/123")
+
+        self.assertEquals(response, True)
+
+    def test_delete_uses_default_base_url(self):
+        self.stub_delete_requests()
+        client = Client(access_token="abc123")
+
+        client.delete("/messages/1")
+
+        self.assert_delete_request("https://www.yammer.com/api/v1/messages/1.json")
+
+    def test_delete_uses_custom_base_url(self):
+        self.stub_delete_requests()
+        client = Client(access_token="1a2bc3", base_url="https://example.com")
+
+        client.delete("/messages/3")
+
+        self.assert_delete_request("https://example.com/messages/3.json")
+
+    def test_delete_sends_authorization_header(self):
+        self.stub_delete_requests()
+        client = Client(access_token="abc123")
+
+        client.delete("/users/123")
+
+        self.assert_delete_request(
+            url="https://www.yammer.com/api/v1/users/123.json",
+            headers={"Authorization": "Bearer abc123"},
+        )
+
+    def test_delete_does_not_send_authorization_header_with_no_token(self):
+        self.stub_delete_requests()
+        client = Client(access_token=None)
+
+        client.delete("/messages/14")
+
+        self.assert_delete_request(
+            url="https://www.yammer.com/api/v1/messages/14.json",
+            headers={},
+        )
+
+    def test_delete_handles_invalid_access_token_responses(self):
+        self.stub_delete_requests(
+            response_status=400,
+            response_body="""{
+                "error": {
+                    "type": "OAuthException",
+                    "message": "Error validating access token."
+                 }
+             }""",
+        )
+        client = Client(access_token="456efg")
+
+        self.assertRaises(InvalidAccessTokenError, client.delete, "/messages/1")
+
+    def test_delete_handles_unauthorized_responses(self):
+        self.stub_delete_requests(response_status=401)
+        client = Client(access_token="456efg")
+
+        self.assertRaises(UnauthorizedError, client.delete, "/messages/1")
+
+    def test_delete_handles_rate_limit_error_responses(self):
+        self.stub_delete_requests(response_status=429)
+        client = Client(access_token="abc")
+
+        self.assertRaises(RateLimitExceededError, client.delete, "/user/1")
+
+    def test_delete_handles_not_found_responses(self):
+        self.stub_delete_requests(response_status=404)
+        client = Client(access_token="456efg")
+
+        self.assertRaises(NotFoundError, client.delete, "/not/real")
+
+    def test_delete_handles_unexpected_http_responses(self):
+        self.stub_delete_requests(response_status=500)
+        client = Client(access_token="abcdef")
+
+        self.assertRaises(ResponseError, client.delete, "/messages/1")
