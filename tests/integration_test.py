@@ -19,11 +19,26 @@ class AuthenticationIntegrationTest(TestCaseWithFakeYammerServer):
 
 
 class MessageIntegrationTest(TestCaseWithFakeYammerServer):
-    def test_fetching_messages(self):
-        yammer = yampy.Yammer(
+    def setUp(self):
+        super(MessageIntegrationTest, self).setUp()
+        self.yammer = yampy.Yammer(
             access_token="valid_token",
             base_url="http://localhost:5000/api/v1",
         )
-        message_result = yammer.messages.all()
+
+    def test_fetching_messages(self):
+        message_result = self.yammer.messages.all()
 
         self.assertEqual(3, len(message_result["messages"]))
+
+    def test_creating_a_message(self):
+        message_result = self.yammer.messages.create(
+            body="Hello everyone!",
+            topics=["python", "testing"],
+            group_id=345,
+        )
+
+        self.assertEqual(1, len(message_result["messages"]))
+        message = message_result["messages"][0]
+
+        self.assertEqual("Hello everyone!", message["body"]["plain"])

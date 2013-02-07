@@ -200,3 +200,26 @@ class MessagesAPI(object):
             limit=limit,
             threaded=threaded,
         ))
+
+    def create(self, body, group_id=None, replied_to_id=None,
+               direct_to_id=None, topics=[], broadcast=None,
+               open_graph_object={}):
+        """
+        Posts a new message to Yammer. Returns the new message in the same
+        format as the various message listing methods ("all", "sent", etc.).
+        """
+        if len(topics) > 20:
+            raise TooManyTopicsError("Too many topics, the maximum is 20")
+
+        if len(open_graph_object) > 0 and "url" not in open_graph_object:
+            raise InvalidOpenGraphObjectError("URL is required")
+
+        return self._client.post("/messages", **ArgumentDict(
+            body=body,
+            group_id=group_id,
+            replied_to_id=replied_to_id,
+            direct_to_id=direct_to_id,
+            topic=topics,
+            broadcast=broadcast,
+            og=open_graph_object,
+        ))

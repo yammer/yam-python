@@ -2,6 +2,7 @@ from mock import Mock
 from unittest import TestCase
 
 from yampy.apis import ArgumentDict, MessagesAPI
+from yampy.errors import InvalidOpenGraphObjectError, TooManyTopicsError
 
 
 class ArgumentDictTest(TestCase):
@@ -160,3 +161,93 @@ class MessagesAPIMessageListFetchingTest(TestCase):
             {"threaded": "true"},
             {"threaded": "extended"},
         )
+
+
+class MessagesAPICreateTest(TestCase):
+    def setUp(self):
+        self.mock_post_response = Mock()
+        self.mock_client = Mock()
+        self.mock_client.post.return_value = self.mock_post_response
+        self.messages_api = MessagesAPI(client=self.mock_client)
+
+    def test_create_simple_message(self):
+        response = self.messages_api.create(body="Hello world")
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages",
+            body="Hello world",
+        )
+        self.assertEquals(self.mock_post_response, response)
+
+    def test_create_complex_message(self):
+        response = self.messages_api.create(
+            body="Hi there",
+            group_id=123,
+            replied_to_id=456,
+            direct_to_id=789,
+        )
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages",
+            body="Hi there",
+            group_id=123,
+            replied_to_id=456,
+            direct_to_id=789,
+        )
+
+    def test_create_message_with_topics(self):
+        response = self.messages_api.create(
+            body="Hi there",
+            topics=["unit testing", "yampy"],
+        )
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages",
+            body="Hi there",
+            topic1="unit testing",
+            topic2="yampy",
+        )
+
+    def test_create_message_with_too_many_topics(self):
+        with self.assertRaises(TooManyTopicsError):
+            self.messages_api.create(
+                body="This message has 21 topics",
+                topics=["topic %d" % i for i in xrange(21)],
+            )
+
+    def test_create_broadcast_message(self):
+        response = self.messages_api.create(
+            body="This is a public service announcement",
+            broadcast=True,
+        )
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages",
+            body="This is a public service announcement",
+            broadcast="true",
+        )
+
+    def test_create_message_with_an_open_graph_object(self):
+        response = self.messages_api.create(
+            body="Google is a search engine",
+            open_graph_object={
+                "url": "http://www.google.com",
+                "fetch": True,
+            },
+        )
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages",
+            body="Google is a search engine",
+            og_url="http://www.google.com",
+            og_fetch="true",
+        )
+
+    def test_create_message_with_an_invalid_open_graph_object(self):
+        with self.assertRaises(InvalidOpenGraphObjectError):
+            self.messages_api.create(
+                body="Open graph this!",
+                open_graph_object={
+                    "fetch": True,
+                },
+            )
