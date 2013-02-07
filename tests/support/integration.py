@@ -56,6 +56,16 @@ class FakeYammerServer(object):
         def delete_message(id):
             return " "
 
+        @self._server.route(
+            "/api/v1/messages/liked_by/current.json",
+            methods=["POST", "DELETE"],
+        )
+        def like_or_unlike_message():
+            if "message_id" in flask.request.args:
+                return " "
+            else:
+                return " ", 400
+
     def run_as_process(self):
         """
         Spawns the fake Yammer API server in a new process. Does not return

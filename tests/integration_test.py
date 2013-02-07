@@ -48,3 +48,14 @@ class MessageIntegrationTest(TestCaseWithFakeYammerServer):
         msg_id = message_result["messages"][0]["id"]
 
         deletion_result = self.yammer.messages.delete(msg_id)
+        self.assertTrue(deletion_result)
+
+    def test_liking_and_unliking_a_message(self):
+        message_result = self.yammer.messages.all()
+        msg_id = message_result["messages"][0]["id"]
+
+        like_result = self.yammer.messages.like(msg_id)
+        self.assertTrue(like_result)
+
+        unlike_result = self.yammer.messages.unlike(msg_id)
+        self.assertTrue(unlike_result)

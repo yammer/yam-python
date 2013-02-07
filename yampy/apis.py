@@ -244,3 +244,22 @@ class MessagesAPI(object):
         Deletes the message identified by message_id.
         """
         return self._client.delete("/messages/%d" % message_id)
+
+    def like(self, message_id):
+        """
+        The current user likes the message identified by message_id.
+        """
+        return self._client.post(
+            "/messages/liked_by/current",
+            message_id=message_id,
+        )
+
+    def unlike(self, message_id):
+        """
+        Removes the current user's "like" from the message identified by
+        message_id.
+        """
+        return self._client.delete(
+            "/messages/liked_by/current",
+            message_id=message_id,
+        )

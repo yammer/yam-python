@@ -33,13 +33,13 @@ class Client(object):
         """
         return self._request("post", path, **kwargs)
 
-    def delete(self, path):
+    def delete(self, path, **kwargs):
         """
         Makes an HTTP DELETE request to the Yammer API.
 
         The path should be the path of an API endpoint, e.g. "/messages/123"
         """
-        return self._request("delete", path)
+        return self._request("delete", path, **kwargs)
 
     def _request(self, method, path, **kwargs):
         response = requests.request(

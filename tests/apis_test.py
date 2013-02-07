@@ -273,3 +273,31 @@ class MessagesAPIDeleteTest(TestCase):
 
         self.mock_client.delete.assert_called_once_with("/messages/3")
         self.assertEquals(self.mock_delete_response, response)
+
+
+class MessagesAPILikeTest(TestCase):
+    def setUp(self):
+        self.mock_post_response = Mock()
+        self.mock_delete_response = Mock()
+        self.mock_client = Mock()
+        self.mock_client.post.return_value = self.mock_post_response
+        self.mock_client.delete.return_value = self.mock_delete_response
+        self.messages_api = MessagesAPI(client=self.mock_client)
+
+    def test_like(self):
+        response = self.messages_api.like(42)
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages/liked_by/current",
+            message_id=42,
+        )
+        self.assertEquals(self.mock_post_response, response)
+
+    def test_unlike(self):
+        response = self.messages_api.unlike(42)
+
+        self.mock_client.delete.assert_called_once_with(
+            "/messages/liked_by/current",
+            message_id=42,
+        )
+        self.assertEquals(self.mock_delete_response, response)
