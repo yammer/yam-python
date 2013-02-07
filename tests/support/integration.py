@@ -70,6 +70,22 @@ class FakeYammerServer(object):
         def users():
             return self._user_list_json(count=3, first_id=1)
 
+        @self._server.route("/api/v1/users/current.json", methods=["GET"])
+        def current_user():
+            return self._user_json(
+                user_id=1,
+                first_name="Joe",
+                last_name="Bloggs",
+            )
+
+        @self._server.route("/api/v1/users/<user_id>.json", methods=["GET"])
+        def user(user_id):
+            return self._user_json(
+                user_id=int(user_id),
+                first_name="John",
+                last_name="Doe",
+            )
+
     def run_as_process(self):
         """
         Spawns the fake Yammer API server in a new process. Does not return
@@ -111,6 +127,9 @@ class FakeYammerServer(object):
         id_range = xrange(first_id, first_id + count)
         users = [self._user_dict(user_id, first_name, last_name) for user_id in id_range]
         return json.dumps(users)
+
+    def _user_json(self, *args, **kwargs):
+        return json.dumps(self._user_dict(*args, **kwargs))
 
     def _user_dict(self, user_id, first_name, last_name):
         return {

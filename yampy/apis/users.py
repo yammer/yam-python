@@ -26,3 +26,23 @@ class UsersAPI(object):
             sort_by=sort_by,
             reverse=reverse,
         ))
+
+    def find_current(self):
+        """
+        Returns the current user.
+        """
+        return self._client.get("/users/current")
+
+    def find(self, user_id):
+        """
+        Returns the user identified by the given user_id.
+        """
+        return self._client.get("/users/%d" % user_id)
+
+    def find_by_email(self, email_address):
+        """
+        Returns the user identified by the given email_address.
+        """
+        return self._client.get("/users/by_email", **ArgumentDict(
+            email=email_address,
+        ))

@@ -38,3 +38,32 @@ class UsersAPIAllTest(TestCase):
             reverse="true",
         )
         self.assertEquals(self.mock_get_response, users)
+
+
+class UsersAPIFindTest(TestCase):
+    def setUp(self):
+        self.mock_get_response = Mock()
+        self.mock_client = Mock()
+        self.mock_client.get.return_value = self.mock_get_response
+        self.users_api = UsersAPI(client=self.mock_client)
+
+    def test_find_current(self):
+        current_user = self.users_api.find_current()
+
+        self.mock_client.get.assert_called_once_with("/users/current")
+        self.assertEquals(self.mock_get_response, current_user)
+
+    def test_find(self):
+        found_user = self.users_api.find(13)
+
+        self.mock_client.get.assert_called_once_with("/users/13")
+        self.assertEquals(self.mock_get_response, found_user)
+
+    def test_find_by_email(self):
+        found_user = self.users_api.find_by_email("user@example.org")
+
+        self.mock_client.get.assert_called_once_with(
+            "/users/by_email",
+            email="user@example.org",
+        )
+        self.assertEquals(self.mock_get_response, found_user)

@@ -72,3 +72,10 @@ class UserIntegrationTest(TestCaseWithFakeYammerServer):
     def test_fetching_users(self):
         users = self.yammer.users.all()
         self.assertEqual(3, len(users))
+
+    def test_fetching_individual_users(self):
+        current_user = self.yammer.users.find_current()
+        self.assertEqual("Joe Bloggs", current_user["full_name"])
+
+        user_by_id = self.yammer.users.find(13)
+        self.assertEqual(13, user_by_id["id"])
