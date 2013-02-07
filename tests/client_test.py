@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from support import HTTPHelpers
+from support.unit import HTTPHelpers
 from yampy import Client
 from yampy.errors import *
 

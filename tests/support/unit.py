@@ -1,9 +1,10 @@
 """
-Shared support for test cases.
+Shared support for unit tests.
 """
 
 from mock import Mock, ANY
 import requests
+
 
 class HTTPHelpers(object):
     """

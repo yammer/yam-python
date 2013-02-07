@@ -2,7 +2,7 @@ import json
 from unittest import TestCase
 from urlparse import urlparse, parse_qs
 
-from support import HTTPHelpers
+from support.unit import HTTPHelpers
 from yampy import Authenticator
 from yampy.errors import *
 
