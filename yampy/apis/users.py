@@ -27,6 +27,19 @@ class UsersAPI(object):
             reverse=reverse,
         ))
 
+    def in_group(self, group_id, page=None):
+        """
+        Returns all the users belonging to the group identified by the given
+        group_id.
+
+        Use the page parameter to enable pagination and retrieve a specific
+        page of users.
+        """
+        path = "/users/in_group/%d" % group_id
+        return self._client.get(path, **ArgumentDict(
+            page=page,
+        ))
+
     def find_current(self):
         """
         Returns the current user.

@@ -40,6 +40,29 @@ class UsersAPIAllTest(TestCase):
         self.assertEquals(self.mock_get_response, users)
 
 
+class UsersAPIInGroupTest(TestCase):
+    def setUp(self):
+        self.mock_get_response = Mock()
+        self.mock_client = Mock()
+        self.mock_client.get.return_value = self.mock_get_response
+        self.users_api = UsersAPI(client=self.mock_client)
+
+    def test_in_group(self):
+        users = self.users_api.in_group(194)
+
+        self.mock_client.get.assert_called_once_with("/users/in_group/194")
+        self.assertEquals(self.mock_get_response, users)
+
+    def test_in_group_with_page(self):
+        users = self.users_api.in_group(42, page=7)
+
+        self.mock_client.get.assert_called_once_with(
+            "/users/in_group/42",
+            page=7,
+        )
+        self.assertEquals(self.mock_get_response, users)
+
+
 class UsersAPIFindTest(TestCase):
     def setUp(self):
         self.mock_get_response = Mock()
