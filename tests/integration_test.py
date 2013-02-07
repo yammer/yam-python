@@ -59,3 +59,16 @@ class MessageIntegrationTest(TestCaseWithFakeYammerServer):
 
         unlike_result = self.yammer.messages.unlike(msg_id)
         self.assertTrue(unlike_result)
+
+
+class UserIntegrationTest(TestCaseWithFakeYammerServer):
+    def setUp(self):
+        super(UserIntegrationTest, self).setUp()
+        self.yammer = yampy.Yammer(
+            access_token="valid_token",
+            base_url="http://localhost:5000/api/v1",
+        )
+
+    def test_fetching_users(self):
+        users = self.yammer.users.all()
+        self.assertEqual(3, len(users))
