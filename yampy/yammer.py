@@ -11,7 +11,7 @@ class Yammer(object):
     """
 
     def __init__(self, access_token=None, base_url=None):
-        self.client = Client(access_token=access_token, base_url=base_url)
+        self._client = Client(access_token=access_token, base_url=base_url)
 
     @property
     def messages(self):
@@ -19,4 +19,4 @@ class Yammer(object):
         Returns a MessagesAPI object which can be used to call the Yammer API's
         message-related endpoints.
         """
-        return MessagesAPI(client=self.client)
+        return MessagesAPI(client=self._client)
