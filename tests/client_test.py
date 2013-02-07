@@ -211,7 +211,7 @@ class ClientDeleteTest(HTTPHelpers, TestCase):
         self.assertEqual(response, {"deleted": True})
 
     def test_delete_handles_success_with_a_blank_body(self):
-        self.stub_delete_requests(response_status=200, response_body="")
+        self.stub_delete_requests(response_status=200, response_body=" ")
         client = Client(access_token="foobar")
 
         response = client.delete("/messages/123")

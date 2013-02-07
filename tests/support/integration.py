@@ -54,7 +54,7 @@ class FakeYammerServer(object):
 
         @self._server.route("/api/v1/messages/<id>.json", methods=["DELETE"])
         def delete_message(id):
-            return ""
+            return " "
 
     def run_as_process(self):
         """

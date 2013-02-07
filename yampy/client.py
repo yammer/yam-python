@@ -68,7 +68,7 @@ class Client(object):
             raise self._exception_for_response(response)
 
     def _value_for_response(self, response):
-        if response.text == "":
+        if len(response.text.strip()) == 0:
             return True
         else:
             return json.loads(response.text)
