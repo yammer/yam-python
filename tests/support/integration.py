@@ -70,6 +70,14 @@ class FakeYammerServer(object):
         def users():
             return self._user_list_json(count=3, first_id=1)
 
+        @self._server.route("/api/v1/users.json", methods=["POST"])
+        def create_user():
+            return self._user_json(
+                user_id=4,
+                first_name=flask.request.args.get("first_name"),
+                last_name=flask.request.args.get("last_name"),
+            )
+
         @self._server.route("/api/v1/users/current.json", methods=["GET"])
         def current_user():
             return self._user_json(

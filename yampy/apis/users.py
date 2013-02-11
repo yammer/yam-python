@@ -1,5 +1,21 @@
 from yampy.apis.utils import ArgumentConverter, flatten_dicts, \
                              stringify_booleans, none_filter
+from yampy.errors import InvalidEducationRecordError
+
+
+def education_argument_converter(arguments):
+    result = arguments.copy()
+    education = result.pop("education", None)
+    if education:
+        record_format = "%(school)s,%(degree)s,%(description)s,"\
+                        "%(start_year)s,%(end_year)s"
+        try:
+            result["education"] = [record_format % r for r in education]
+        except KeyError as e:
+            raise InvalidEducationRecordError(
+                "Education record missing %s" % e.args
+            )
+    return result
 
 
 class UsersAPI(object):
@@ -13,6 +29,7 @@ class UsersAPI(object):
             flatten_dicts,
             stringify_booleans,
             none_filter,
+            education_argument_converter,
         )
 
     def all(self, page=None, letter=None, sort_by=None, reverse=None):
@@ -78,7 +95,11 @@ class UsersAPI(object):
         im -- Provide instant messages details as a dict with "provider" and
             "username" keys, e.g.
             {"provider": "gtalk", "username": "me@gmail.com"}
+        education -- Provide education details as a list of dicts. Each dict
+            should have the keys: school, degree, description, start_year and
+            end_year.
         """
+
         return self._client.post("/users", **self._argument_converter(
             email=email_address,
             full_name=full_name,
@@ -93,4 +114,5 @@ class UsersAPI(object):
             interests=interests,
             summary=summary,
             expertise=expertise,
+            education=education,
         ))

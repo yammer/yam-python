@@ -2,6 +2,7 @@ from mock import Mock
 
 from tests.support.unit import TestCaseWithMockClient
 from yampy.apis import UsersAPI
+from yampy.errors import InvalidEducationRecordError
 
 
 class UsersAPIAllTest(TestCaseWithMockClient):
@@ -137,3 +138,46 @@ class UsersAPICreateTest(TestCaseWithMockClient):
             summary="Zaphod's just this guy, y'know?",
             expertise="Work and stuff",
         )
+
+    def test_create_user_with_education_history(self):
+        created_user = self.users_api.create(
+            email_address="person@example.org",
+            education=(
+                {
+                    "school": "Manchester University",
+                    "degree": "BSc",
+                    "description": "Computer Science",
+                    "start_year": "2002",
+                    "end_year": "2005",
+                },
+                {
+                    "school": "Imperial College",
+                    "degree": "MSc",
+                    "description": "Computer Science",
+                    "start_year": "2005",
+                    "end_year": "2006",
+                }
+            ),
+        )
+
+        self.mock_client.post.assert_called_once_with(
+            "/users",
+            email="person@example.org",
+            education=[
+                "Manchester University,BSc,Computer Science,2002,2005",
+                "Imperial College,MSc,Computer Science,2005,2006",
+            ]
+        )
+
+    def test_create_user_with_invalid_education_history(self):
+        with self.assertRaises(InvalidEducationRecordError):
+            self.users_api.create(
+                email_address="person@example.org",
+                education=(
+                    {
+                        "description": "Computer Science",
+                        "start_year": "2005",
+                        "end_year": "2006",
+                    },
+                ),
+            )
