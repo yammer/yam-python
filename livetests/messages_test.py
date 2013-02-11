@@ -11,15 +11,18 @@ import yampy
 
 class MessagesIntegrationTest(TestCase):
     @skip_without_environment_variable("YAMMER_ACCESS_TOKEN")
-    def test_posting_and_reading_a_message(self, access_token):
-        yammer = yampy.Client(access_token)
+    def test_posting_reading_and_deleting_messages(self, access_token):
+        yammer = yampy.Yammer(access_token)
         test_message = "The time is %s" % datetime.now()
 
-        result = yammer.post("/messages", body=test_message)
+        result = yammer.messages.create(body=test_message)
+        new_message = result["messages"][0]
+        self.assertEqual(new_message["body"]["plain"], test_message)
 
-        self.assertIn("messages", result)
-        message = result["messages"][0]
-        self.assertEqual(message["body"]["plain"], test_message)
-
-        all_messages = yammer.get("/messages")
+        all_messages = yammer.messages.all()
         self.assertIn(test_message, str(all_messages))
+
+        yammer.messages.delete(new_message["id"])
+
+        all_messages = yammer.messages.all()
+        self.assertNotIn(test_message, str(all_messages))

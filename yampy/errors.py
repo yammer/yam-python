@@ -39,3 +39,26 @@ class RateLimitExceededError(ResponseError):
     exceeded.
     """
     pass
+
+
+class InvalidMessageError(StandardError):
+    """
+    Super class for the various kinds of errors that can occur when creating
+    a message.
+    """
+    pass
+
+
+class TooManyTopicsError(InvalidMessageError):
+    """
+    Raised when a message cannot be created because too many topics have been
+    specified.
+    """
+    pass
+
+
+class InvalidOpenGraphObjectError(InvalidMessageError):
+    """
+    Raised when an invalid Open Graph object is attached to a new message.
+    """
+    pass

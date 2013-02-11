@@ -1,9 +1,10 @@
 """
-Shared support for test cases.
+Shared support for unit tests.
 """
 
 from mock import Mock, ANY
 import requests
+
 
 class HTTPHelpers(object):
     """
@@ -38,6 +39,17 @@ class HTTPHelpers(object):
 
     def assert_post_request(self, url, params=ANY, headers=ANY):
         self.assert_request("post", url, params, headers)
+
+    def stub_delete_requests(self, response_body="{}", response_status=200):
+        mock_response = Mock(
+            text=response_body,
+            status_code=response_status,
+            reason="",
+        )
+        requests.request = Mock(return_value=mock_response)
+
+    def assert_delete_request(self, url, params=ANY, headers=ANY):
+        self.assert_request("delete", url, params, headers)
 
     def assert_request(self, method, url, params=ANY, headers=ANY):
         requests.request.assert_called_with(
