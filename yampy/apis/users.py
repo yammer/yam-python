@@ -1,4 +1,5 @@
-from yampy.apis.utils import ArgumentDict
+from yampy.apis.utils import ArgumentConverter, flatten_dicts, \
+                             stringify_booleans, none_filter
 
 
 class UsersAPI(object):
@@ -8,6 +9,11 @@ class UsersAPI(object):
         to make HTTP requests.
         """
         self._client = client
+        self._argument_converter = ArgumentConverter(
+            flatten_dicts,
+            stringify_booleans,
+            none_filter,
+        )
 
     def all(self, page=None, letter=None, sort_by=None, reverse=None):
         """
@@ -20,7 +26,7 @@ class UsersAPI(object):
             alphabetical by username).
         reverse -- Reverse sort order.
         """
-        return self._client.get("/users", **ArgumentDict(
+        return self._client.get("/users", **self._argument_converter(
             page=page,
             letter=letter,
             sort_by=sort_by,
@@ -36,7 +42,7 @@ class UsersAPI(object):
         page of users.
         """
         path = "/users/in_group/%d" % group_id
-        return self._client.get(path, **ArgumentDict(
+        return self._client.get(path, **self._argument_converter(
             page=page,
         ))
 
@@ -56,14 +62,14 @@ class UsersAPI(object):
         """
         Returns the user identified by the given email_address.
         """
-        return self._client.get("/users/by_email", **ArgumentDict(
+        return self._client.get("/users/by_email", **self._argument_converter(
             email=email_address,
         ))
 
     def create(self, email_address, full_name=None, job_title=None,
                location=None, im=None, work_telephone=None, work_extension=None,
                mobile_telephone=None, significant_other=None, kids_names=None,
-               interests=None, summary=None, expertise=None):
+               interests=None, summary=None, expertise=None, education=None):
         """
         Creates a new user.
 
@@ -73,7 +79,7 @@ class UsersAPI(object):
             "username" keys, e.g.
             {"provider": "gtalk", "username": "me@gmail.com"}
         """
-        return self._client.post("/users", **ArgumentDict(
+        return self._client.post("/users", **self._argument_converter(
             email=email_address,
             full_name=full_name,
             job_title=job_title,

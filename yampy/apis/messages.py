@@ -1,5 +1,6 @@
 from yampy.errors import InvalidOpenGraphObjectError, TooManyTopicsError
-from yampy.apis.utils import ArgumentDict
+from yampy.apis.utils import ArgumentConverter, flatten_lists, flatten_dicts, \
+                             stringify_booleans, none_filter
 
 
 class MessagesAPI(object):
@@ -14,6 +15,12 @@ class MessagesAPI(object):
         to make HTTP requests.
         """
         self._client = client
+        self._argument_converter = ArgumentConverter(
+            flatten_lists,
+            flatten_dicts,
+            stringify_booleans,
+            none_filter,
+        )
 
     def all(self, older_than=None, newer_than=None,
             limit=None, threaded=None):
@@ -28,7 +35,7 @@ class MessagesAPI(object):
             thread, or to "extended" to recieve the first and two newest
             messages from each thread.
         """
-        return self._client.get("/messages", **ArgumentDict(
+        return self._client.get("/messages", **self._argument_converter(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
@@ -44,7 +51,7 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        return self._client.get("/messages/my_feed", **ArgumentDict(
+        return self._client.get("/messages/my_feed", **self._argument_converter(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
@@ -58,7 +65,7 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        return self._client.get("/messages/algo", **ArgumentDict(
+        return self._client.get("/messages/algo", **self._argument_converter(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
@@ -73,7 +80,7 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        return self._client.get("/messages/following", **ArgumentDict(
+        return self._client.get("/messages/following", **self._argument_converter(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
@@ -87,7 +94,7 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        return self._client.get("/messages/sent", **ArgumentDict(
+        return self._client.get("/messages/sent", **self._argument_converter(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
@@ -101,7 +108,7 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        return self._client.get("/messages/private", **ArgumentDict(
+        return self._client.get("/messages/private", **self._argument_converter(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
@@ -115,7 +122,7 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        return self._client.get("/messages/received", **ArgumentDict(
+        return self._client.get("/messages/received", **self._argument_converter(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
@@ -130,7 +137,7 @@ class MessagesAPI(object):
         See the "all" method for a description of the keyword arguments.
         """
         path = "/messages/in_thread/%d" % thread_id
-        return self._client.get(path, **ArgumentDict(
+        return self._client.get(path, **self._argument_converter(
             older_than=older_than,
             newer_than=newer_than,
             limit=limit,
@@ -150,7 +157,7 @@ class MessagesAPI(object):
         if len(open_graph_object) > 0 and "url" not in open_graph_object:
             raise InvalidOpenGraphObjectError("URL is required")
 
-        return self._client.post("/messages", **ArgumentDict(
+        return self._client.post("/messages", **self._argument_converter(
             body=body,
             group_id=group_id,
             replied_to_id=replied_to_id,

@@ -1,90 +1,150 @@
 from mock import Mock
 from unittest import TestCase
 
-from yampy.apis.utils import ArgumentDict
+from yampy.apis.utils import ArgumentConverter, flatten_lists, flatten_dicts, \
+                             stringify_booleans, none_filter
 
 
-class ArgumentDictTest(TestCase):
-    def test_stores_values(self):
-        args = ArgumentDict()
-        args["foo"] = 123
+class ArgumentConverterNoConvertersTest(TestCase):
+    """
+    Tests the ArgumentConverter with no converters.
+    """
 
-        self.assertEquals(123, args["foo"])
+    def setUp(self):
+        self.converter = ArgumentConverter()
 
-    def test_ignores_none_values(self):
-        args = ArgumentDict()
-        args["foo"] = None
-
-        with self.assertRaises(KeyError):
-            args["foo"]
-
-    def test_converts_booleans_to_strings(self):
-        args = ArgumentDict()
-        args["foo"] = True
-        args["bar"] = False
-
-        self.assertEquals("true", args["foo"])
-        self.assertEquals("false", args["bar"])
-
-    def test_stores_lists_as_multiple_keys(self):
-        args = ArgumentDict()
-        args["topic"] = ["testing", "python"]
-
-        with self.assertRaises(KeyError):
-            args["topic"]
-
-        self.assertEquals("testing", args["topic1"])
-        self.assertEquals("python", args["topic2"])
-
-    def test_add_tuple(self):
-        args = ArgumentDict()
-        args["topic"] = ("first", "second", True, )
-
-        with self.assertRaises(KeyError):
-            args["topic"]
-
-        self.assertEquals("first", args["topic1"])
-        self.assertEquals("second", args["topic2"])
-        self.assertEquals("true", args["topic3"])
-
-    def test_add_empty_tuple(self):
-        args = ArgumentDict()
-        args["topic"] = ()
-
-        with self.assertRaises(KeyError):
-            args["topic"]
-
-        with self.assertRaises(KeyError):
-            args["topic1"]
-
-    def test_add_dict(self):
-        args = ArgumentDict()
-        args["og"] = {"url": "http://www.google.com", "fetch": True}
-
-        with self.assertRaises(KeyError):
-            args["og"]
-
-        self.assertEquals("http://www.google.com", args["og_url"])
-        self.assertEquals("true", args["og_fetch"])
-
-    def test_initializing_with_values(self):
-        args = ArgumentDict(
+    def test_does_not_change_any_values(self):
+        result = self.converter(
+            boolean=True,
             number=1,
             string="hello",
-            topic=(True, False),
+            list=[1, 2, 3],
+            tuple=(True, False),
+            empty_tuple=(),
+            none=None,
         )
 
-        self.assertEquals(1, args["number"])
-        self.assertEquals("hello", args["string"])
-        self.assertEquals("true", args["topic1"])
-        self.assertEquals("false", args["topic2"])
+        self.assertEquals(True, result["boolean"])
+        self.assertEquals(1, result["number"])
+        self.assertEquals("hello", result["string"])
+        self.assertEquals([1, 2, 3], result["list"])
+        self.assertEquals((True, False), result["tuple"])
+        self.assertEquals((), result["empty_tuple"])
+        self.assertEquals(None, result["none"])
 
-    def test_using_an_argument_dict_as_keyword_arguments(self):
-        args = ArgumentDict()
-        args["foo"] = 1
-        args["bar"] = 2
 
-        mock = Mock()
-        mock(**args)
+class ArgumentConverterFlattenDictsTest(TestCase):
+    """
+    Tests the ArgumentConverter using the flatten_dicts converter.
+    """
 
-        mock.assert_called_once_with(foo=1, bar=2)
+    def setUp(self):
+        self.converter = ArgumentConverter(flatten_dicts)
+
+    def test_converts_dict_to_multiple_keys(self):
+        result = self.converter(og={"url": "http://www.google.com", "fetch": True})
+
+        with self.assertRaises(KeyError):
+            result["og"]
+
+        self.assertEquals("http://www.google.com", result["og_url"])
+        self.assertEquals(True, result["og_fetch"])
+
+
+class ArgumentConverterFlattenListsTest(TestCase):
+    """
+    Tests the ArgumentConverter using the flatten_lists converter.
+    """
+
+    def setUp(self):
+        self.converter = ArgumentConverter(flatten_lists)
+
+    def test_converts_list_to_multiple_keys(self):
+        result = self.converter(
+            topic=["testing", "python"],
+        )
+
+        with self.assertRaises(KeyError):
+            result["topic"]
+
+        self.assertEquals("testing", result["topic1"])
+        self.assertEquals("python", result["topic2"])
+
+    def test_converts_tuple_to_multiple_keys(self):
+        result = self.converter(topic=("first", "second", ))
+
+        with self.assertRaises(KeyError):
+            result["topic"]
+
+        self.assertEquals("first", result["topic1"])
+        self.assertEquals("second", result["topic2"])
+
+    def test_ignores_empty_tuples(self):
+        result = self.converter(topic=())
+
+        with self.assertRaises(KeyError):
+            result["topic"]
+
+        with self.assertRaises(KeyError):
+            result["topic1"]
+
+
+class ArgumentConverterStringifyBooleansTest(TestCase):
+    """
+    Tests the ArgumentConverter using the stringify_booleans converter.
+    """
+
+    def setUp(self):
+        self.converter = ArgumentConverter(stringify_booleans)
+
+    def test_converts_booleans_to_strings(self):
+        result = self.converter(
+            yes=True,
+            no=False,
+        )
+
+        self.assertEquals("true", result["yes"])
+        self.assertEquals("false", result["no"])
+
+
+class ArgumentConverterNoneFilterTest(TestCase):
+    """
+    Tests the ArgumentConverter using the none_filter converter.
+    """
+
+    def setUp(self):
+        self.converter = ArgumentConverter(none_filter)
+
+    def test_ignores_none_values(self):
+        result = self.converter(foo=None)
+
+        with self.assertRaises(KeyError):
+            result["foo"]
+
+
+class ArgumentConverterCompositionTest(TestCase):
+    """
+    Tests the ArgumentConverter using multiple converters.
+    """
+
+    def setUp(self):
+        self.converter = ArgumentConverter(
+            flatten_dicts,
+            flatten_lists,
+            none_filter,
+        )
+
+    def test_applies_each_converter_in_turn(self):
+        result = self.converter(
+            a_dict={
+                "a_list": [1, 2, None],
+            },
+        )
+
+        self.assertEquals(
+            {
+                "a_dict_a_list1": 1,
+                "a_dict_a_list2": 2,
+            },
+            result
+        )
