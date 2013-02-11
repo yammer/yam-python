@@ -5,15 +5,24 @@ from yampy.apis import MessagesAPI
 from yampy.errors import InvalidOpenGraphObjectError, TooManyTopicsError
 
 
-class MessagesAPIMessageListFetchingTest(TestCase):
+class TestCaseWithMockClient(TestCase):
+    def setUp(self):
+        self.mock_get_response = Mock()
+        self.mock_post_response = Mock()
+        self.mock_delete_response = Mock()
+        self.mock_client = Mock()
+        self.mock_client.get.return_value = self.mock_get_response
+        self.mock_client.post.return_value = self.mock_post_response
+        self.mock_client.delete.return_value = self.mock_delete_response
+
+
+class MessagesAPIMessageListFetchingTest(TestCaseWithMockClient):
     """
     Tests all MessagesAPI methods associated with fetching lists of messages.
     """
 
     def setUp(self):
-        self.mock_get_response = Mock()
-        self.mock_client = Mock()
-        self.mock_client.get.return_value = self.mock_get_response
+        super(MessagesAPIMessageListFetchingTest, self).setUp()
         self.messages_api = MessagesAPI(client=self.mock_client)
 
     def test_all(self):
@@ -85,11 +94,9 @@ class MessagesAPIMessageListFetchingTest(TestCase):
         )
 
 
-class MessagesAPICreateTest(TestCase):
+class MessagesAPICreateTest(TestCaseWithMockClient):
     def setUp(self):
-        self.mock_post_response = Mock()
-        self.mock_client = Mock()
-        self.mock_client.post.return_value = self.mock_post_response
+        super(MessagesAPICreateTest, self).setUp()
         self.messages_api = MessagesAPI(client=self.mock_client)
 
     def test_create_simple_message(self):
@@ -175,11 +182,9 @@ class MessagesAPICreateTest(TestCase):
             )
 
 
-class MessagesAPIDeleteTest(TestCase):
+class MessagesAPIDeleteTest(TestCaseWithMockClient):
     def setUp(self):
-        self.mock_delete_response = Mock()
-        self.mock_client = Mock()
-        self.mock_client.delete.return_value = self.mock_delete_response
+        super(MessagesAPIDeleteTest, self).setUp()
         self.messages_api = MessagesAPI(client=self.mock_client)
 
     def test_delete(self):
@@ -189,13 +194,9 @@ class MessagesAPIDeleteTest(TestCase):
         self.assertEquals(self.mock_delete_response, response)
 
 
-class MessagesAPILikeTest(TestCase):
+class MessagesAPILikeTest(TestCaseWithMockClient):
     def setUp(self):
-        self.mock_post_response = Mock()
-        self.mock_delete_response = Mock()
-        self.mock_client = Mock()
-        self.mock_client.post.return_value = self.mock_post_response
-        self.mock_client.delete.return_value = self.mock_delete_response
+        super(MessagesAPILikeTest, self).setUp()
         self.messages_api = MessagesAPI(client=self.mock_client)
 
     def test_like(self):
