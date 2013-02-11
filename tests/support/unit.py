@@ -4,6 +4,7 @@ Shared support for unit tests.
 
 from mock import Mock, ANY
 import requests
+from unittest import TestCase
 
 
 class HTTPHelpers(object):
@@ -58,3 +59,21 @@ class HTTPHelpers(object):
             params=params,
             headers=headers,
         )
+
+
+class TestCaseWithMockClient(TestCase):
+    """
+    Test case with a mock yampy.Client instance.
+
+    Use self.mock_client in place of a real Client instance. Assert values were
+    returned by the mock client by checking against self.mock_get_response, etc.
+    """
+
+    def setUp(self):
+        self.mock_get_response = Mock()
+        self.mock_post_response = Mock()
+        self.mock_delete_response = Mock()
+        self.mock_client = Mock()
+        self.mock_client.get.return_value = self.mock_get_response
+        self.mock_client.post.return_value = self.mock_post_response
+        self.mock_client.delete.return_value = self.mock_delete_response

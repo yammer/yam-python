@@ -1,14 +1,12 @@
 from mock import Mock
-from unittest import TestCase
 
+from tests.support.unit import TestCaseWithMockClient
 from yampy.apis import UsersAPI
 
 
-class UsersAPIAllTest(TestCase):
+class UsersAPIAllTest(TestCaseWithMockClient):
     def setUp(self):
-        self.mock_get_response = Mock()
-        self.mock_client = Mock()
-        self.mock_client.get.return_value = self.mock_get_response
+        super(UsersAPIAllTest, self).setUp()
         self.users_api = UsersAPI(client=self.mock_client)
 
     def test_all(self):
@@ -40,11 +38,9 @@ class UsersAPIAllTest(TestCase):
         self.assertEquals(self.mock_get_response, users)
 
 
-class UsersAPIInGroupTest(TestCase):
+class UsersAPIInGroupTest(TestCaseWithMockClient):
     def setUp(self):
-        self.mock_get_response = Mock()
-        self.mock_client = Mock()
-        self.mock_client.get.return_value = self.mock_get_response
+        super(UsersAPIInGroupTest, self).setUp()
         self.users_api = UsersAPI(client=self.mock_client)
 
     def test_in_group(self):
@@ -63,11 +59,9 @@ class UsersAPIInGroupTest(TestCase):
         self.assertEquals(self.mock_get_response, users)
 
 
-class UsersAPIFindTest(TestCase):
+class UsersAPIFindTest(TestCaseWithMockClient):
     def setUp(self):
-        self.mock_get_response = Mock()
-        self.mock_client = Mock()
-        self.mock_client.get.return_value = self.mock_get_response
+        super(UsersAPIFindTest, self).setUp()
         self.users_api = UsersAPI(client=self.mock_client)
 
     def test_find_current(self):
@@ -92,11 +86,9 @@ class UsersAPIFindTest(TestCase):
         self.assertEquals(self.mock_get_response, found_user)
 
 
-class UsersAPICreateTest(TestCase):
+class UsersAPICreateTest(TestCaseWithMockClient):
     def setUp(self):
-        self.mock_post_response = Mock()
-        self.mock_client = Mock()
-        self.mock_client.post.return_value = self.mock_post_response
+        super(UsersAPICreateTest, self).setUp()
         self.users_api = UsersAPI(client=self.mock_client)
 
     def test_create_simple_user(self):
