@@ -1,6 +1,7 @@
 from yampy.apis.utils import ArgumentConverter, flatten_dicts, \
                              stringify_booleans, none_filter
-from yampy.errors import InvalidEducationRecordError
+from yampy.errors import InvalidEducationRecordError, \
+                         InvalidPreviousCompanyRecord
 
 
 def education_argument_converter(arguments):
@@ -18,6 +19,20 @@ def education_argument_converter(arguments):
     return result
 
 
+def previous_companies_argument_converter(arguments):
+    result = arguments.copy()
+    previous_companies = result.pop("previous_companies", None)
+    if previous_companies:
+        record_format = "%(company)s,%(position)s,%(start_year)s,%(end_year)s"
+        try:
+            result["previous_companies"] = [record_format % r for r in previous_companies]
+        except KeyError as e:
+            raise InvalidPreviousCompanyRecord(
+                "Previous company record missing %s" % e.args
+            )
+    return result
+
+
 class UsersAPI(object):
     def __init__(self, client):
         """
@@ -30,6 +45,7 @@ class UsersAPI(object):
             stringify_booleans,
             none_filter,
             education_argument_converter,
+            previous_companies_argument_converter,
         )
 
     def all(self, page=None, letter=None, sort_by=None, reverse=None):
@@ -86,7 +102,8 @@ class UsersAPI(object):
     def create(self, email_address, full_name=None, job_title=None,
                location=None, im=None, work_telephone=None, work_extension=None,
                mobile_telephone=None, significant_other=None, kids_names=None,
-               interests=None, summary=None, expertise=None, education=None):
+               interests=None, summary=None, expertise=None, education=None,
+               previous_companies=None):
         """
         Creates a new user.
 
@@ -115,4 +132,5 @@ class UsersAPI(object):
             summary=summary,
             expertise=expertise,
             education=education,
+            previous_companies=previous_companies,
         ))

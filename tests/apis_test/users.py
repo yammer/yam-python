@@ -2,7 +2,8 @@ from mock import Mock
 
 from tests.support.unit import TestCaseWithMockClient
 from yampy.apis import UsersAPI
-from yampy.errors import InvalidEducationRecordError
+from yampy.errors import InvalidEducationRecordError, \
+                         InvalidPreviousCompanyRecord
 
 
 class UsersAPIAllTest(TestCaseWithMockClient):
@@ -180,4 +181,43 @@ class UsersAPICreateTest(TestCaseWithMockClient):
                         "end_year": "2006",
                     },
                 ),
+            )
+
+    def test_create_user_with_employment_history(self):
+        created_user = self.users_api.create(
+            email_address="ripley@example.org",
+            previous_companies=(
+                {
+                    "company": "Acme Inc.",
+                    "position": "developer",
+                    "start_year": "2001",
+                    "end_year": "2012",
+                },
+                {
+                    "company": "Weyland Yutani",
+                    "position": "terraforming engineer",
+                    "start_year": "2110",
+                    "end_year": "2119",
+                }
+            ),
+        )
+
+        self.mock_client.post.assert_called_once_with(
+            "/users",
+            email="ripley@example.org",
+            previous_companies=[
+                "Acme Inc.,developer,2001,2012",
+                "Weyland Yutani,terraforming engineer,2110,2119",
+            ],
+        )
+
+    def test_create_user_with_invalid_employment_history(self):
+        with self.assertRaises(InvalidPreviousCompanyRecord):
+            self.users_api.create(
+                email_address="someone@exmaple.com",
+                previous_companies=[
+                    {
+                        "company": "Incomplete",
+                    }
+                ],
             )

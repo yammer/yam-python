@@ -76,3 +76,10 @@ class InvalidEducationRecordError(InvalidUserError):
     all of the requried information.
     """
     pass
+
+class InvalidPreviousCompanyRecord(InvalidUserError):
+    """
+    Raised when creating a user with a previous_companies record that doesn't
+    include all of the required fields.
+    """
+    pass
