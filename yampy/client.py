@@ -68,10 +68,10 @@ class Client(object):
             raise self._exception_for_response(response)
 
     def _value_for_response(self, response):
-        if len(response.text.strip()) == 0:
-            return True
-        else:
+        if response.text.strip():
             return json.loads(response.text)
+        else:
+            return True
 
     def _exception_for_response(self, response):
         if response.status_code == 404:
