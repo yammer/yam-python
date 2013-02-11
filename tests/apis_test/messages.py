@@ -26,60 +26,34 @@ class MessagesAPIMessageListFetchingTest(TestCaseWithMockClient):
         self.messages_api = MessagesAPI(client=self.mock_client)
 
     def test_all(self):
-        for kwargs in self.valid_message_list_arguments:
-            messages = self.messages_api.all(**kwargs)
-
-            self.mock_client.get.assert_called_with("/messages", **kwargs)
-            self.assertEquals(self.mock_get_response, messages)
+        self._test_list_fetch("/messages", self.messages_api.all)
 
     def test_from_my_feed(self):
-        for kwargs in self.valid_message_list_arguments:
-            messages = self.messages_api.from_my_feed(**kwargs)
-
-            self.mock_client.get.assert_called_with("/messages/my_feed", **kwargs)
-            self.assertEquals(self.mock_get_response, messages)
+        self._test_list_fetch("/messages/my_feed", self.messages_api.from_my_feed)
 
     def test_from_top_conversations(self):
-        for kwargs in self.valid_message_list_arguments:
-            messages = self.messages_api.from_top_conversations(**kwargs)
-
-            self.mock_client.get.assert_called_with("/messages/algo", **kwargs)
-            self.assertEquals(self.mock_get_response, messages)
+        self._test_list_fetch("/messages/algo", self.messages_api.from_top_conversations)
 
     def test_from_followed_conversations(self):
-        for kwargs in self.valid_message_list_arguments:
-            messages = self.messages_api.from_followed_conversations(**kwargs)
-
-            self.mock_client.get.assert_called_with("/messages/following", **kwargs)
-            self.assertEquals(self.mock_get_response, messages)
+        self._test_list_fetch("/messages/following", self.messages_api.from_followed_conversations)
 
     def test_sent(self):
-        for kwargs in self.valid_message_list_arguments:
-            messages = self.messages_api.sent(**kwargs)
-
-            self.mock_client.get.assert_called_with("/messages/sent", **kwargs)
-            self.assertEquals(self.mock_get_response, messages)
+        self._test_list_fetch("/messages/sent", self.messages_api.sent)
 
     def test_private(self):
-        for kwargs in self.valid_message_list_arguments:
-            messages = self.messages_api.private(**kwargs)
-
-            self.mock_client.get.assert_called_with("/messages/private", **kwargs)
-            self.assertEquals(self.mock_get_response, messages)
+        self._test_list_fetch("/messages/private", self.messages_api.private)
 
     def test_received(self):
-        for kwargs in self.valid_message_list_arguments:
-            messages = self.messages_api.received(**kwargs)
-
-            self.mock_client.get.assert_called_with("/messages/received", **kwargs)
-            self.assertEquals(self.mock_get_response, messages)
+        self._test_list_fetch("/messages/received", self.messages_api.received)
 
     def test_in_thread(self):
-        for kwargs in self.valid_message_list_arguments:
-            messages = self.messages_api.in_thread(12345, **kwargs)
+        self._test_list_fetch("/messages/in_thread/12345", self.messages_api.in_thread, 12345)
 
-            self.mock_client.get.assert_called_with("/messages/in_thread/12345",
-                                                    **kwargs)
+    def _test_list_fetch(self, path, method, *method_args):
+        for kwargs in self.valid_message_list_arguments:
+            messages = method(*method_args, **kwargs)
+
+            self.mock_client.get.assert_called_with(path, **kwargs)
             self.assertEquals(self.mock_get_response, messages)
 
     @property
