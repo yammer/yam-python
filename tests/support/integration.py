@@ -126,17 +126,17 @@ class FakeYammerServer(object):
         Spawns the fake Yammer API server in a new process. Does not return
         until the server is ready to handle requests.
         """
-        self.process = Process(target=self._server.run)
-        self.process.start()
+        self._process = Process(target=self._server.run)
+        self._process.start()
         self._poll_until_server_responds()
 
     def stop_process(self):
         """
         Stops the fake Yammer API server's process.
         """
-        if hasattr(self, "process"):
-            self.process.terminate()
-            self.process.join()
+        if hasattr(self, "_process"):
+            self._process.terminate()
+            self._process.join()
 
     def _message_list_json(self, count=1, first_id=1, body="Hello world"):
         id_range = xrange(first_id, first_id + count)
