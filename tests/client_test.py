@@ -304,3 +304,99 @@ class ClientDeleteTest(HTTPHelpers, TestCase):
         client = Client(access_token="abcdef")
 
         self.assertRaises(ResponseError, client.delete, "/messages/1")
+
+
+class ClientPutTest(HTTPHelpers, TestCase):
+    def test_put_parses_response_json(self):
+        self.stub_put_requests(
+            response_body='{"messages": ["first", "second"]}',
+        )
+        client = Client(access_token="abc123")
+
+        messages = client.put("/messages", body="Hello world")
+
+        self.assertEqual(messages, {"messages": ["first", "second"]})
+
+    def test_put_uses_default_base_url(self):
+        self.stub_put_requests()
+        client = Client(access_token="abc123")
+
+        client.put("/messages", body="Hello Yammer")
+
+        self.assert_put_request("https://www.yammer.com/api/v1/messages.json")
+
+    def test_put_uses_custom_base_url(self):
+        self.stub_put_requests()
+        client = Client(access_token="1a2bc3", base_url="http://example.com")
+
+        client.put("/messages", body="Hello fake Yammer")
+
+        self.assert_put_request("http://example.com/messages.json")
+
+    def test_put_sends_authorization_header(self):
+        self.stub_put_requests()
+        client = Client(access_token="abc123")
+
+        client.put("/messages", body="I am authorized")
+
+        self.assert_put_request(
+            url="https://www.yammer.com/api/v1/messages.json",
+            headers={"Authorization": "Bearer abc123"},
+        )
+
+    def test_put_sends_query_string_parameters(self):
+        self.stub_put_requests()
+        client = Client(access_token="456efg")
+
+        client.put("/messages", body="Oh hai")
+
+        self.assert_put_request(
+            url="https://www.yammer.com/api/v1/messages.json",
+            params={"body": "Oh hai"},
+        )
+
+    def test_put_handles_invalid_access_token_responses(self):
+        self.stub_put_requests(
+            response_status=400,
+            response_body="""{
+                "error": {
+                    "type": "OAuthException",
+                    "message": "Error validating access token."
+                 }
+             }""",
+        )
+        client = Client(access_token="456efg")
+
+        self.assertRaises(InvalidAccessTokenError, client.put, "/messages",
+                          body="No more token")
+
+    def test_put_handles_created_responses(self):
+        self.stub_put_requests(
+            response_status=201,
+            response_body='{"status": "OK"}',
+        )
+        client = Client(access_token="456efg")
+
+        response = client.put("/messages", body="A-OK")
+
+        self.assertEqual(response, {"status": "OK"})
+
+    def test_put_handles_rate_limit_error_responses(self):
+        self.stub_put_requests(response_status=429)
+        client = Client(access_token="abc")
+
+        self.assertRaises(RateLimitExceededError, client.put, "/messages",
+                          body="Do I talk too much?")
+
+    def test_put_handles_not_found_responses(self):
+        self.stub_put_requests(response_status=404)
+        client = Client(access_token="456efg")
+
+        self.assertRaises(NotFoundError, client.put, "/not/real")
+
+    def test_put_handles_unexpected_http_responses(self):
+        self.stub_put_requests(response_status=122)
+        client = Client(access_token="abcdef")
+
+        self.assertRaises(ResponseError, client.put, "/messages",
+                          body="BOOM!")

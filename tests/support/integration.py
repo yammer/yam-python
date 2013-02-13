@@ -94,6 +94,10 @@ class FakeYammerServer(object):
                 last_name="Doe",
             )
 
+        @self._server.route("/api/v1/users/<user_id>.json", methods=["PUT"])
+        def update_user(user_id):
+            return " "
+
     def run_as_process(self):
         """
         Spawns the fake Yammer API server in a new process. Does not return

@@ -221,3 +221,129 @@ class UsersAPICreateTest(TestCaseWithMockClient):
                     }
                 ],
             )
+
+
+class UsersAPIUpdateTest(TestCaseWithMockClient):
+    def setUp(self):
+        super(UsersAPIUpdateTest, self).setUp()
+        self.users_api = UsersAPI(client=self.mock_client)
+
+    def test_update_user(self):
+        result = self.users_api.update(
+            user_id=12345,
+            email_address="someone@example.org",
+            full_name="John Doe",
+            job_title="Developer",
+            location="Stockholm, Sweden",
+            im={
+                "provider": "gtalk",
+                "username": "someone@gmail.example.com",
+            },
+            work_telephone="+46123123123",
+            work_extension="123",
+            mobile_telephone="+46789789789",
+            significant_other="Jane",
+            kids_names="Tom, Dick and Harry",
+            interests="Programming, testing",
+            summary="Zaphod's just this guy, y'know?",
+            expertise="Work and stuff",
+        )
+
+        self.mock_client.put.assert_called_once_with(
+            "/users/12345",
+            email="someone@example.org",
+            full_name="John Doe",
+            job_title="Developer",
+            location="Stockholm, Sweden",
+            im_provider="gtalk",
+            im_username="someone@gmail.example.com",
+            work_telephone="+46123123123",
+            work_extension="123",
+            mobile_telephone="+46789789789",
+            significant_other="Jane",
+            kids_names="Tom, Dick and Harry",
+            interests="Programming, testing",
+            summary="Zaphod's just this guy, y'know?",
+            expertise="Work and stuff",
+        )
+        self.assertEquals(self.mock_put_response, result)
+
+    def test_update_user_with_education_history(self):
+        self.users_api.update(
+            user_id=7,
+            education=(
+                {
+                    "school": "Manchester University",
+                    "degree": "BSc",
+                    "description": "Computer Science",
+                    "start_year": "2002",
+                    "end_year": "2005",
+                },
+                {
+                    "school": "Imperial College",
+                    "degree": "MSc",
+                    "description": "Computer Science",
+                    "start_year": "2005",
+                    "end_year": "2006",
+                }
+            ),
+        )
+
+        self.mock_client.put.assert_called_once_with(
+            "/users/7",
+            education=[
+                "Manchester University,BSc,Computer Science,2002,2005",
+                "Imperial College,MSc,Computer Science,2005,2006",
+            ]
+        )
+
+    def test_update_user_with_invalid_education_history(self):
+        with self.assertRaises(InvalidEducationRecordError):
+            self.users_api.update(
+                user_id=12,
+                education=(
+                    {
+                        "description": "Computer Science",
+                        "start_year": "2005",
+                        "end_year": "2006",
+                    },
+                ),
+            )
+
+    def test_update_user_with_employment_history(self):
+        self.users_api.update(
+            user_id=123,
+            previous_companies=(
+                {
+                    "company": "Acme Inc.",
+                    "position": "developer",
+                    "start_year": "2001",
+                    "end_year": "2012",
+                },
+                {
+                    "company": "Weyland Yutani",
+                    "position": "terraforming engineer",
+                    "start_year": "2110",
+                    "end_year": "2119",
+                }
+            ),
+        )
+
+        self.mock_client.put.assert_called_once_with(
+            "/users/123",
+            previous_companies=[
+                "Acme Inc.,developer,2001,2012",
+                "Weyland Yutani,terraforming engineer,2110,2119",
+            ],
+        )
+
+    def test_update_user_with_invalid_employment_history(self):
+        with self.assertRaises(InvalidPreviousCompanyRecord):
+            self.users_api.update(
+                user_id=77,
+                previous_companies=[
+                    {
+                        "company": "Incomplete",
+                    }
+                ],
+            )

@@ -115,9 +115,43 @@ class UsersAPI(object):
         education -- Provide education details as a list of dicts. Each dict
             should have the keys: school, degree, description, start_year and
             end_year.
+        previous_companies -- Provide previous employment details as a list of
+            dicts. Each dict should have the keys: company, position,
+            start_year, end_year
         """
 
         return self._client.post("/users", **self._argument_converter(
+            email=email_address,
+            full_name=full_name,
+            job_title=job_title,
+            location=location,
+            im=im,
+            work_telephone=work_telephone,
+            work_extension=work_extension,
+            mobile_telephone=mobile_telephone,
+            significant_other=significant_other,
+            kids_names=kids_names,
+            interests=interests,
+            summary=summary,
+            expertise=expertise,
+            education=education,
+            previous_companies=previous_companies,
+        ))
+
+    def update(self, user_id, email_address=None, full_name=None,
+               job_title=None, location=None, im=None, work_telephone=None,
+               work_extension=None, mobile_telephone=None,
+               significant_other=None, kids_names=None, interests=None,
+               summary=None, expertise=None, education=None,
+               previous_companies=None):
+        """
+        Updates the user identified by the given user_id.
+
+        For more information on parameter formats, see the ``new`` method.
+        """
+
+        path = "/users/%d" % user_id
+        return self._client.put(path, **self._argument_converter(
             email=email_address,
             full_name=full_name,
             job_title=job_title,

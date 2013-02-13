@@ -33,6 +33,15 @@ class Client(object):
         """
         return self._request("post", path, **kwargs)
 
+    def put(self, path, **kwargs):
+        """
+        Makes an HTTP PUT request to the Yammer API. Any keyword arguments will
+        be sent as the body of the request.
+
+        The path should be the path of an API endpoint, e.g. "/users/123"
+        """
+        return self._request("put", path, **kwargs)
+
     def delete(self, path, **kwargs):
         """
         Makes an HTTP DELETE request to the Yammer API.

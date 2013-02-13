@@ -94,3 +94,10 @@ class UserIntegrationTest(TestCaseWithFakeYammerServer):
                 },
             ],
         )
+
+    def test_updating_a_user(self):
+        update_result = self.yammer.users.update(
+            user_id=1,
+            full_name="John Smith",
+        )
+        self.assertTrue(update_result)
