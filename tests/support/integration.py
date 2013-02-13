@@ -20,6 +20,7 @@ Shared support for integration tests.
 """
 
 import json
+import logging
 from multiprocessing import Process
 import requests
 from requests.exceptions import RequestException
@@ -41,6 +42,7 @@ class FakeYammerServer(object):
         Creates the server and defines the various routes.
         """
         self._server = flask.Flask("FakeYammerServer")
+        self._silence_logger()
 
         @self._server.route("/up")
         def up():
@@ -177,6 +179,11 @@ class FakeYammerServer(object):
             requests.get("http://localhost:5000/up", timeout=0.1)
         except RequestException:
             self._poll_until_server_responds()
+
+    def _silence_logger(self):
+        # The info messages from the Flask server are generate by
+        # Werkzeug. Increasing its log level silences them.
+        logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
 
 class TestCaseWithFakeYammerServer(TestCase):
