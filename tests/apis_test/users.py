@@ -347,3 +347,24 @@ class UsersAPIUpdateTest(TestCaseWithMockClient):
                     }
                 ],
             )
+
+
+class UsersAPISuspendAndDeleteTest(TestCaseWithMockClient):
+    def setUp(self):
+        super(UsersAPISuspendAndDeleteTest, self).setUp()
+        self.users_api = UsersAPI(client=self.mock_client)
+
+    def test_suspend(self):
+        suspend_result = self.users_api.suspend(123)
+
+        self.mock_client.delete.assert_called_once_with("/users/123")
+        self.assertEquals(self.mock_delete_response, suspend_result)
+
+    def test_delete(self):
+        delete_result = self.users_api.delete(123)
+
+        self.mock_client.delete.assert_called_once_with(
+            "/users/123",
+            delete="true",
+        )
+        self.assertEquals(self.mock_delete_response, delete_result)

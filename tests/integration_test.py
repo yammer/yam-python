@@ -101,3 +101,11 @@ class UserIntegrationTest(TestCaseWithFakeYammerServer):
             full_name="John Smith",
         )
         self.assertTrue(update_result)
+
+    def test_suspending_a_user(self):
+        suspend_result = self.yammer.users.suspend(123)
+        self.assertTrue(suspend_result)
+
+    def test_deleting_a_user(self):
+        delete_result = self.yammer.users.delete(123)
+        self.assertTrue(delete_result)

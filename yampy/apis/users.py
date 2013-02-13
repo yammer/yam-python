@@ -168,3 +168,15 @@ class UsersAPI(object):
             education=education,
             previous_companies=previous_companies,
         ))
+
+    def suspend(self, user_id):
+        """
+        Suspend the user identified by user_id.
+        """
+        return self._client.delete("/users/%d" % user_id)
+
+    def delete(self, user_id):
+        """
+        Delete the user identified by user_id.
+        """
+        return self._client.delete("/users/%d" % user_id, delete="true")
