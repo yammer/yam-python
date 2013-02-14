@@ -154,6 +154,27 @@ yammer.users.suspend(a_user_id)
 yammer.users.delete(a_user_id)
 ```
 
+#### Making other requests
+
+For other endpoints in the Yammer REST API, you will need to use the HTTP API.
+The `yampy.Client` class will help you do this.
+
+For example, to get a list of org chart relationships you would make this HTTP
+request:
+
+    GET https://www.yammer.com/api/v1/relationships.json?access_token=...
+
+You can do this easily with the yampy client:
+
+    yammer.client.get("/relationships")
+
+If you need to add parameters to the request, you can pass them as keyword
+arguments. For example:
+
+    yammer.client.get("/suggestions", limit=20)
+
+See the [REST API documentation][API-REST] for a full list of API endpoints.
+
 ## Contributing
 
 To contribute to this project, see the
@@ -163,3 +184,4 @@ file.
 [API-auth]: https://developer.yammer.com/authentication/
 [API-messages]: https://developer.yammer.com/restapi/#rest-messages
 [API-users]: https://developer.yammer.com/restapi/#rest-users
+[API-REST]: https://developer.yammer.com/restapi/
