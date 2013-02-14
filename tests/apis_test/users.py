@@ -72,6 +72,21 @@ class UsersAPIFindTest(TestCaseWithMockClient):
         self.mock_client.get.assert_called_once_with("/users/current")
         self.assertEquals(self.mock_get_response, current_user)
 
+    def test_find_current_with_additional_information(self):
+        current_user = self.users_api.find_current(
+            include_followed_users=True,
+            include_followed_tags=True,
+            include_group_memberships=True,
+        )
+
+        self.mock_client.get.assert_called_once_with(
+            "/users/current",
+            include_followed_users="true",
+            include_followed_tags="true",
+            include_group_memberships="true",
+        )
+        self.assertEquals(self.mock_get_response, current_user)
+
     def test_find(self):
         found_user = self.users_api.find(13)
 

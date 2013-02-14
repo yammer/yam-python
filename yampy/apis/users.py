@@ -88,11 +88,16 @@ class UsersAPI(object):
             page=page,
         ))
 
-    def find_current(self):
+    def find_current(self, include_group_memberships=None,
+                     include_followed_users=None, include_followed_tags=None):
         """
         Returns the current user.
         """
-        return self._client.get("/users/current")
+        return self._client.get("/users/current", **self._argument_converter(
+            include_group_memberships=include_group_memberships,
+            include_followed_users=include_followed_users,
+            include_followed_tags=include_followed_tags,
+        ))
 
     def find(self, user_id):
         """
