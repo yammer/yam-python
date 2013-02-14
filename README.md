@@ -76,13 +76,13 @@ To authenticate a user of your application:
 
 ### Making requests
 
-Once you have an access token you can create a `yampy.Client` and start making
-requests to the API:
+Once you have an access token you can create a `yampy.Yammer` instance and start
+making requests to the API:
 
 ```python
 import yampy
 
-yammer = yampy.Client(access_token=access_token)
+yammer = yampy.Yammer(access_token=access_token)
 ```
 
 You can also pass the `base_url` keyword argument to change the base URL
@@ -91,33 +91,67 @@ example, in your test suite you might want to run a fake Yammer API server
 locally to speed up your tests:
 
 ```python
-yammer = yampy.Client(access_token=access_token,
+yammer = yampy.Yammer(access_token=access_token,
                       base_url="http://localhost:5001")
 ```
 
-Use the `yampy.Client` instance to make requests to any of the API endpoints.
-For a complete list of Yammer API endpoints, see the [REST API
-documentation](http://developer.yammer.com/restapi/). Here are a few examples:
+#### Messages
+
+You can make [message-related requests][API-messages] use this domain specific
+API. Many of these methods take keyword arguments to customised the results,
+see the built in documentation (`help(yammer.messages)`) for details.
 
 ```python
-# Find a user by ID
-yammer.get("/users/123456")
+# Get a list of messages
+yammer.messages.all()
+yammer.messages.from_my_feed()
+yammer.messages.from_top_conversations()
+yammer.messages.from_followed_conversations()
+yammer.messages.sent()
+yammer.messages.private()
+yammer.messages.received()
+yammer.messages.in_thread(a_thread_id)
 
-# Find a user by email
-yammer.get("/users/by_email", email="user@example.com")
+# Post a new message
+yammer.messages.create("Hello world!")
+yammer.messages.create("Hello developers", group_id=developers_group_id,
+                       topics=["Python", "API", "Yammer"])
 
-# Post a status message
-yammer.post("/messages", body="Trying out yampy")
+# Delete a message
+yammer.messages.delete(a_message_id)
 
-# Send a private message to a user
-yammer.post("/messages", body="Just for you", direct_to_id=123456)
+# Like messages
+yammer.messages.like(a_message_id)
+yammer.messages.unlike(a_message_id)
+```
 
-# Send a private message to a group
-yammer.post("/messages", body="Hey developers!", group_id=98765)
+#### Users
 
-# Send a message with an attached Open Graph Object
-yammer.post("/messages", body="Check this out",
-            og_url="http://example.com/graph/12345")
+[User related requests][API-users] also have a specific API. As with messages,
+these methods accept many keyword arguments. See the build in documentation for
+details.
+
+```python
+# Get a list of users
+yammer.users.all()
+yammer.users.in_group(a_group_id)
+
+# Get the logged in user
+yammer.users.find_current()
+
+# Get a specific individual user
+yammer.users.find(a_user_id)
+yammer.users.find_by_email("user@example.com")
+
+# Create a new user
+yammer.users.create("user@example.org", full_name="John Doe")
+
+# Update a user
+yammer.users.update(a_user_id, summary="An example user")
+
+# Suspend and delete users
+yammer.users.suspend(a_user_id)
+yammer.users.delete(a_user_id)
 ```
 
 ## Contributing
@@ -127,3 +161,5 @@ To contribute to this project, see the
 file.
 
 [API-auth]: https://developer.yammer.com/authentication/
+[API-messages]: https://developer.yammer.com/restapi/#rest-messages
+[API-users]: https://developer.yammer.com/restapi/#rest-users

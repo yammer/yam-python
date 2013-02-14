@@ -66,6 +66,42 @@ class FakeYammerServer(object):
             else:
                 return " ", 400
 
+        @self._server.route("/api/v1/users.json", methods=["GET"])
+        def users():
+            return self._user_list_json(count=3, first_id=1)
+
+        @self._server.route("/api/v1/users.json", methods=["POST"])
+        def create_user():
+            return self._user_json(
+                user_id=4,
+                first_name=flask.request.args.get("first_name"),
+                last_name=flask.request.args.get("last_name"),
+            )
+
+        @self._server.route("/api/v1/users/current.json", methods=["GET"])
+        def current_user():
+            return self._user_json(
+                user_id=1,
+                first_name="Joe",
+                last_name="Bloggs",
+            )
+
+        @self._server.route("/api/v1/users/<user_id>.json", methods=["GET"])
+        def user(user_id):
+            return self._user_json(
+                user_id=int(user_id),
+                first_name="John",
+                last_name="Doe",
+            )
+
+        @self._server.route("/api/v1/users/<user_id>.json", methods=["PUT"])
+        def update_user(user_id):
+            return " "
+
+        @self._server.route("/api/v1/users/<user_id>.json", methods=["DELETE"])
+        def delete_user(user_id):
+            return " "
+
     def run_as_process(self):
         """
         Spawns the fake Yammer API server in a new process. Does not return
@@ -100,6 +136,23 @@ class FakeYammerServer(object):
                 "parsed": body,
                 "rich": body,
             }
+        }
+
+    def _user_list_json(self, count=1, first_id=1,
+                        first_name="John", last_name="Doe"):
+        id_range = xrange(first_id, first_id + count)
+        users = [self._user_dict(user_id, first_name, last_name) for user_id in id_range]
+        return json.dumps(users)
+
+    def _user_json(self, *args, **kwargs):
+        return json.dumps(self._user_dict(*args, **kwargs))
+
+    def _user_dict(self, user_id, first_name, last_name):
+        return {
+            "id": user_id,
+            "first_name": first_name,
+            "last_name": last_name,
+            "full_name": "%s %s" % (first_name, last_name),
         }
 
     def _poll_until_server_responds(self):

@@ -2,81 +2,106 @@
 Utilities used by the various APIs.
 """
 
-class ArgumentDict(object):
+from functools import wraps
+
+
+def instance_replacer(*types):
     """
-    A dictionary of arguments for an API call. As arguments are added they
-    are converted to the type expected by the Yammer API.
+    Decorator for functions that passes all key/value pairs where the value
+    has one of the given types to the decorated function. The decorated
+    function should return a dict, which will be used as a replacement for
+    the key/value pair that was pass to it.
 
-    Booleans will be converted to strings:
+    For example:
+      @instance_replacer(bool)
+      def boolean_inverter(key, value):
+          return {"not_%s" % key: not value}
 
-        args["yes"] = True
-        args["no"] = False
+      boolean_inverter({"yes": True, "no": False, "other": 1})
+      {"not_yes": False, "not_no": True, "other": 1}
+    """
+    def decorator(func):
+        @wraps(func)
+        def inner(arguments):
+            result = {}
+            for k, v in arguments.iteritems():
+                if isinstance(v, types):
+                    result.update(func(k, v))
+                else:
+                    result[k] = v
+            return result
+        return inner
+    return decorator
 
-        args["yes"] is "true"
-        args["no"] is "false"
 
-    Lists and tuples will be split over multiple keys:
+@instance_replacer(dict)
+def flatten_dicts(prefix, collection):
+    """
+    Flattens nested dictionaries, joining the keys with an underscore.
+    e.g. {"foo": {"bar": 1}}  becomes  {"foo_bar": 1}
+    """
+    result = {}
+    for key, value in collection.iteritems():
+        item_key = "%s_%s" % (prefix, key)
+        result[item_key] = value
+    return result
 
-        args["topic"] == ("first", "second",)
 
-        args["topic1"] is "first"
-        args["topic2"] is "second"
+@instance_replacer(list, tuple)
+def flatten_lists(prefix, collection):
+    """
+    Expands all lists and tuples in a dictionary, so that each list item has
+    its own key.
+    e.g. {"foo": ("a", "b")}  becomes  {"foo1": "a", "foo2": "b"}
+    """
+    result = {}
+    for index, value in enumerate(collection):
+        item_key = "%s%d" % (prefix, index + 1)
+        result[item_key] = value
+    return result
 
-    Dicts will be expanded:
 
-        args["og"] = {"url": "http://example.com", "type": "example"}
+@instance_replacer(bool)
+def stringify_booleans(key, value):
+    """
+    Replaces all boolean values in a dictionary with lowercase strings.
+    e.g. {"yes": True}  becomes  {"yes": "true"}
+    """
+    if value:
+        return {key: "true"}
+    else:
+        return {key: "false"}
 
-        args["og_url"] is "http://example.com"
-        args["og_type"] is "example"
 
-    None will be discarded:
+@instance_replacer(type(None))
+def none_filter(key, value):
+    """
+    Removes None values from a dictionary.
+    e.g. {"number": 1, "none": None}  becomes  {"number": 1}
+    """
+    return {}
 
-        args["null"] = None
 
-        args["null"] # will raise a KeyError
+class ArgumentConverter(object):
+    """
+    A callable object that takes a dict (in the form of keyword arguments),
+    passes it through various converters and returns the result.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, *converters):
         """
-        Initializes a new argument dict. Keyword arguments will be added to
-        the dict after being subjected to the usual conversions.
+        Initialize an ArgumentConverter that will call each of the given
+        converters in turn. Converters should be callable, take a dict, and
+        return a dict.
         """
-        self._arguments = {}
-        for key, value in kwargs.items():
-            self[key] = value
+        self._converters = converters
 
-    def keys(self):
-        return self._arguments.keys()
-
-    def __setitem__(self, key, value):
-        if isinstance(value, dict):
-            self._add_dict(key, value)
-        elif isinstance(value, (list, tuple)):
-            self._add_list(key, value)
-        else:
-            self._add_value(key, value)
-
-    def __getitem__(self, key):
-        return self._arguments[key]
-
-    def _add_value(self, key, value):
-        if value is not None:
-            self._arguments[key] = self._convert_value(value)
-
-    def _add_list(self, key, values):
-        for index, value in enumerate(values):
-            item_key = "%s%d" % (key, index + 1)
-            self._arguments[item_key] = self._convert_value(value)
-
-    def _add_dict(self, prefix, values):
-        for key, value in values.items():
-            item_key = "%s_%s" % (prefix, key)
-            self._arguments[item_key] = self._convert_value(value)
-
-    def _convert_value(self, value):
-        if value is True:
-            return "true"
-        elif value is False:
-            return "false"
-        else:
-            return value
+    def __call__(self, **kwargs):
+        """
+        Passes the dict of keyword arguments through each converter in turn,
+        and returns the result.
+        """
+        converted_args = kwargs.copy()
+        for converter in self._converters:
+            converted_args = converter(converted_args)
+        return converted_args

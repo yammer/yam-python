@@ -62,3 +62,24 @@ class InvalidOpenGraphObjectError(InvalidMessageError):
     Raised when an invalid Open Graph object is attached to a new message.
     """
     pass
+
+class InvalidUserError(StandardError):
+    """
+    Super class for the various kinds of errors that can occur when creating
+    a user.
+    """
+    pass
+
+class InvalidEducationRecordError(InvalidUserError):
+    """
+    Raised when creating a user with an education record that doesn't include
+    all of the requried information.
+    """
+    pass
+
+class InvalidPreviousCompanyRecord(InvalidUserError):
+    """
+    Raised when creating a user with a previous_companies record that doesn't
+    include all of the required fields.
+    """
+    pass

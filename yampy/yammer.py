@@ -1,4 +1,4 @@
-from apis import MessagesAPI
+from apis import MessagesAPI, UsersAPI
 from client import Client
 
 class Yammer(object):
@@ -19,4 +19,16 @@ class Yammer(object):
         Returns a MessagesAPI object which can be used to call the Yammer API's
         message-related endpoints.
         """
-        return MessagesAPI(client=self._client)
+        if not hasattr(self, "_messages_api"):
+            self._messages_api = MessagesAPI(client=self._client)
+        return self._messages_api
+
+    @property
+    def users(self):
+        """
+        Returns a UsersAPI object which can be used to call the Yammer API's
+        user-related endpoints.
+        """
+        if not hasattr(self, "_users_api"):
+            self._users_api = UsersAPI(client=self._client)
+        return self._users_api

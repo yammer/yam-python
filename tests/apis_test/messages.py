@@ -1,19 +1,8 @@
 from mock import Mock
-from unittest import TestCase
 
+from tests.support.unit import TestCaseWithMockClient
 from yampy.apis import MessagesAPI
 from yampy.errors import InvalidOpenGraphObjectError, TooManyTopicsError
-
-
-class TestCaseWithMockClient(TestCase):
-    def setUp(self):
-        self.mock_get_response = Mock()
-        self.mock_post_response = Mock()
-        self.mock_delete_response = Mock()
-        self.mock_client = Mock()
-        self.mock_client.get.return_value = self.mock_get_response
-        self.mock_client.post.return_value = self.mock_post_response
-        self.mock_client.delete.return_value = self.mock_delete_response
 
 
 class MessagesAPIMessageListFetchingTest(TestCaseWithMockClient):

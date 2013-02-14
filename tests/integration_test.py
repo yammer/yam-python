@@ -59,3 +59,53 @@ class MessageIntegrationTest(TestCaseWithFakeYammerServer):
 
         unlike_result = self.yammer.messages.unlike(msg_id)
         self.assertTrue(unlike_result)
+
+
+class UserIntegrationTest(TestCaseWithFakeYammerServer):
+    def setUp(self):
+        super(UserIntegrationTest, self).setUp()
+        self.yammer = yampy.Yammer(
+            access_token="valid_token",
+            base_url="http://localhost:5000/api/v1",
+        )
+
+    def test_fetching_users(self):
+        users = self.yammer.users.all()
+        self.assertEqual(3, len(users))
+
+    def test_fetching_individual_users(self):
+        current_user = self.yammer.users.find_current()
+        self.assertEqual("Joe Bloggs", current_user["full_name"])
+
+        user_by_id = self.yammer.users.find(13)
+        self.assertEqual(13, user_by_id["id"])
+
+    def test_creating_a_user(self):
+        user_result = self.yammer.users.create(
+            email_address="john.doe@example.com",
+            full_name="John Doe",
+            education=[
+                {
+                    "school": "Manchester University",
+                    "degree": "BSc",
+                    "description": "Computer Science",
+                    "start_year": "2002",
+                    "end_year": "2005",
+                },
+            ],
+        )
+
+    def test_updating_a_user(self):
+        update_result = self.yammer.users.update(
+            user_id=1,
+            full_name="John Smith",
+        )
+        self.assertTrue(update_result)
+
+    def test_suspending_a_user(self):
+        suspend_result = self.yammer.users.suspend(123)
+        self.assertTrue(suspend_result)
+
+    def test_deleting_a_user(self):
+        delete_result = self.yammer.users.delete(123)
+        self.assertTrue(delete_result)
