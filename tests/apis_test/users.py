@@ -190,12 +190,14 @@ class UsersAPICreateTest(TestCaseWithMockClient):
                 {
                     "company": "Acme Inc.",
                     "position": "developer",
+                    "description": "writing code",
                     "start_year": "2001",
                     "end_year": "2012",
                 },
                 {
                     "company": "Weyland Yutani",
                     "position": "terraforming engineer",
+                    "description": "fighting aliens",
                     "start_year": "2110",
                     "end_year": "2119",
                 }
@@ -206,8 +208,8 @@ class UsersAPICreateTest(TestCaseWithMockClient):
             "/users",
             email="ripley@example.org",
             previous_companies=[
-                "Acme Inc.,developer,2001,2012",
-                "Weyland Yutani,terraforming engineer,2110,2119",
+                "Acme Inc.,developer,writing code,2001,2012",
+                "Weyland Yutani,terraforming engineer,fighting aliens,2110,2119",
             ],
         )
 
@@ -315,12 +317,14 @@ class UsersAPIUpdateTest(TestCaseWithMockClient):
                 {
                     "company": "Acme Inc.",
                     "position": "developer",
+                    "description": "making software",
                     "start_year": "2001",
                     "end_year": "2012",
                 },
                 {
                     "company": "Weyland Yutani",
                     "position": "terraforming engineer",
+                    "description": "mostly dull routine",
                     "start_year": "2110",
                     "end_year": "2119",
                 }
@@ -330,8 +334,8 @@ class UsersAPIUpdateTest(TestCaseWithMockClient):
         self.mock_client.put.assert_called_once_with(
             "/users/123",
             previous_companies=[
-                "Acme Inc.,developer,2001,2012",
-                "Weyland Yutani,terraforming engineer,2110,2119",
+                "Acme Inc.,developer,making software,2001,2012",
+                "Weyland Yutani,terraforming engineer,mostly dull routine,2110,2119",
             ],
         )
 

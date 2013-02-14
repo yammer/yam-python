@@ -23,7 +23,8 @@ def previous_companies_argument_converter(arguments):
     result = arguments.copy()
     previous_companies = result.pop("previous_companies", None)
     if previous_companies:
-        record_format = "%(company)s,%(position)s,%(start_year)s,%(end_year)s"
+        record_format = "%(company)s,%(position)s,%(description)s,"\
+                        "%(start_year)s,%(end_year)s"
         try:
             result["previous_companies"] = [record_format % r for r in previous_companies]
         except KeyError as e:
