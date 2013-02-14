@@ -183,6 +183,26 @@ class UsersAPICreateTest(TestCaseWithMockClient):
                 ),
             )
 
+    def test_create_user_with_a_single_education_record(self):
+        self.users_api.create(
+            email_address="person@example.org",
+            education={
+                "school": "MIT",
+                "degree": "MSc",
+                "description": "Architecture",
+                "start_year": "2001",
+                "end_year": "2005",
+            },
+        )
+
+        self.mock_client.post.assert_called_once_with(
+            "/users",
+            email="person@example.org",
+            education=[
+                "MIT,MSc,Architecture,2001,2005",
+            ]
+        )
+
     def test_create_user_with_employment_history(self):
         created_user = self.users_api.create(
             email_address="ripley@example.org",
@@ -216,13 +236,33 @@ class UsersAPICreateTest(TestCaseWithMockClient):
     def test_create_user_with_invalid_employment_history(self):
         with self.assertRaises(InvalidPreviousCompanyRecord):
             self.users_api.create(
-                email_address="someone@exmaple.com",
+                email_address="someone@example.com",
                 previous_companies=[
                     {
                         "company": "Incomplete",
                     }
                 ],
             )
+
+    def test_create_user_with_a_single_employment_history_record(self):
+        self.users_api.create(
+            email_address="someone@example.com",
+            previous_companies={
+                "company": "Blue Sun",
+                "position": "T-shirt printer",
+                "description": "Making t-shirts",
+                "start_year": "2515",
+                "end_year": "2517",
+            },
+        )
+
+        self.mock_client.post.assert_called_once_with(
+            "/users",
+            email="someone@example.com",
+            previous_companies=[
+                "Blue Sun,T-shirt printer,Making t-shirts,2515,2517",
+            ],
+        )
 
 
 class UsersAPIUpdateTest(TestCaseWithMockClient):

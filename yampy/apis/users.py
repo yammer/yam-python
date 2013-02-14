@@ -7,6 +7,10 @@ from yampy.errors import InvalidEducationRecordError, \
 def education_argument_converter(arguments):
     result = arguments.copy()
     education = result.pop("education", None)
+
+    if isinstance(education, dict):
+        education = (education,)
+
     if education:
         record_format = "%(school)s,%(degree)s,%(description)s,"\
                         "%(start_year)s,%(end_year)s"
@@ -22,6 +26,10 @@ def education_argument_converter(arguments):
 def previous_companies_argument_converter(arguments):
     result = arguments.copy()
     previous_companies = result.pop("previous_companies", None)
+
+    if isinstance(previous_companies, dict):
+        previous_companies = (previous_companies, )
+
     if previous_companies:
         record_format = "%(company)s,%(position)s,%(description)s,"\
                         "%(start_year)s,%(end_year)s"
@@ -42,11 +50,11 @@ class UsersAPI(object):
         """
         self._client = client
         self._argument_converter = ArgumentConverter(
+            education_argument_converter,
+            previous_companies_argument_converter,
             flatten_dicts,
             stringify_booleans,
             none_filter,
-            education_argument_converter,
-            previous_companies_argument_converter,
         )
 
     def all(self, page=None, letter=None, sort_by=None, reverse=None):
