@@ -14,6 +14,14 @@ class Yammer(object):
         self._client = Client(access_token=access_token, base_url=base_url)
 
     @property
+    def client(self):
+        """
+        Returns a Client object which can be used to make HTTP requests to any
+        of the Yammer REST API endpoints.
+        """
+        return self._client
+
+    @property
     def messages(self):
         """
         Returns a MessagesAPI object which can be used to call the Yammer API's

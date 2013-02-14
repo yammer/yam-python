@@ -2,6 +2,7 @@ from unittest import TestCase
 from mock import patch, Mock
 
 from yampy import Yammer
+from yampy.client import Client
 from yampy.apis import MessagesAPI, UsersAPI
 
 class YammerTest(TestCase):
@@ -36,3 +37,14 @@ class YammerTest(TestCase):
             client=MockClient(),
         )
         self.assertIsInstance(users, UsersAPI)
+
+    @patch("yampy.yammer.Client", spec=True)
+    def test_client_returns_a_client_instance(self, MockClient):
+        yammer = Yammer(access_token="thx1138")
+        client = yammer.client
+
+        MockClient.assert_called_once_with(
+            access_token="thx1138",
+            base_url=None,
+        )
+        self.assertIsInstance(client, Client)
