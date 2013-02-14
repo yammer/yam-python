@@ -231,7 +231,6 @@ class UsersAPIUpdateTest(TestCaseWithMockClient):
     def test_update_user(self):
         result = self.users_api.update(
             user_id=12345,
-            email_address="someone@example.org",
             full_name="John Doe",
             job_title="Developer",
             location="Stockholm, Sweden",
@@ -251,7 +250,6 @@ class UsersAPIUpdateTest(TestCaseWithMockClient):
 
         self.mock_client.put.assert_called_once_with(
             "/users/12345",
-            email="someone@example.org",
             full_name="John Doe",
             job_title="Developer",
             location="Stockholm, Sweden",

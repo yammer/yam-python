@@ -138,7 +138,7 @@ class UsersAPI(object):
             previous_companies=previous_companies,
         ))
 
-    def update(self, user_id, email_address=None, full_name=None,
+    def update(self, user_id, full_name=None,
                job_title=None, location=None, im=None, work_telephone=None,
                work_extension=None, mobile_telephone=None,
                significant_other=None, kids_names=None, interests=None,
@@ -152,7 +152,6 @@ class UsersAPI(object):
 
         path = "/users/%d" % user_id
         return self._client.put(path, **self._argument_converter(
-            email=email_address,
             full_name=full_name,
             job_title=job_title,
             location=location,
