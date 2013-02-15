@@ -121,7 +121,7 @@ class UsersAPI(object):
         """
         Returns the user identified by the given user_id.
         """
-        return self._client.get("/users/%d" % extract_id(user_id))
+        return self._client.get(self._user_path(user_id))
 
     def find_by_email(self, email_address):
         """
@@ -182,7 +182,7 @@ class UsersAPI(object):
         For more information on parameter formats, see the ``new`` method.
         """
 
-        path = "/users/%d" % extract_id(user_id)
+        path = self._user_path(user_id)
         return self._client.put(path, **self._argument_converter(
             full_name=full_name,
             job_title=job_title,
@@ -204,10 +204,13 @@ class UsersAPI(object):
         """
         Suspend the user identified by user_id.
         """
-        return self._client.delete("/users/%d" % extract_id(user_id))
+        return self._client.delete(self._user_path(user_id))
 
     def delete(self, user_id):
         """
         Delete the user identified by user_id.
         """
-        return self._client.delete("/users/%d" % extract_id(user_id), delete="true")
+        return self._client.delete(self._user_path(user_id), delete="true")
+
+    def _user_path(self, user_id):
+        return "/users/%d" % extract_id(user_id)
