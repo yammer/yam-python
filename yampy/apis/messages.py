@@ -178,6 +178,12 @@ class MessagesAPI(object):
             threaded=threaded,
         ))
 
+    def find(self, message_id):
+        """
+        Returns the message identified by the given message_id.
+        """
+        return self._client.get("/messages/%d" % extract_id(message_id))
+
     def create(self, body, group_id=None, replied_to_id=None,
                direct_to_id=None, topics=[], broadcast=None,
                open_graph_object={}):

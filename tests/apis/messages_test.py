@@ -89,6 +89,28 @@ class MessagesAPIMessageListFetchingTest(TestCaseWithMockClient):
         )
 
 
+class MessagesAPIFindTest(TestCaseWithMockClient):
+    def setUp(self):
+        super(MessagesAPIFindTest, self).setUp()
+        self.messages_api = MessagesAPI(client=self.mock_client)
+
+    def test_find(self):
+        message = self.messages_api.find(121)
+
+        self.mock_client.get.assert_called_with("/messages/121")
+        self.assertEquals(self.mock_get_response, message)
+
+    def test_find_passing_id_as_a_dict(self):
+        self.messages_api.find({"id": 33})
+
+        self.mock_client.get.assert_called_with("/messages/33")
+
+    def test_find_passing_id_as_an_object(self):
+        self.messages_api.find(Mock(id=2))
+
+        self.mock_client.get.assert_called_with("/messages/2")
+
+
 class MessagesAPICreateTest(TestCaseWithMockClient):
     def setUp(self):
         super(MessagesAPICreateTest, self).setUp()
