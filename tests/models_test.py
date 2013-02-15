@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from yampy.models import GenericModel
+from yampy.models import GenericModel, extract_id
 
 
 class GenericModelTest(TestCase):
@@ -20,3 +20,17 @@ class GenericModelTest(TestCase):
 
         with self.assertRaises(AttributeError):
             model.bar
+
+
+class ExtractIDTest(TestCase):
+    def test_extraction_from_dict(self):
+        object_id = extract_id({"id": 17})
+        self.assertEquals(17, object_id)
+
+    def test_extraction_from_attribute(self):
+        object_id = extract_id(GenericModel({"id": 21}))
+        self.assertEquals(21, object_id)
+
+    def test_fallback_when_extraction_fails(self):
+        object_id = extract_id(37)
+        self.assertEquals(37, object_id)

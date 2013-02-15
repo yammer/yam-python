@@ -17,7 +17,8 @@
 
 from yampy.errors import InvalidOpenGraphObjectError, TooManyTopicsError
 from yampy.apis.utils import ArgumentConverter, flatten_lists, flatten_dicts, \
-                             stringify_booleans, none_filter
+                             stringify_booleans, extract_ids, none_filter
+from yampy.models import extract_id
 
 
 class MessagesAPI(object):
@@ -33,6 +34,7 @@ class MessagesAPI(object):
         """
         self._client = client
         self._argument_converter = ArgumentConverter(
+            extract_ids,
             flatten_lists,
             flatten_dicts,
             stringify_booleans,
@@ -153,7 +155,7 @@ class MessagesAPI(object):
 
         See the "all" method for a description of the keyword arguments.
         """
-        path = "/messages/in_thread/%d" % thread_id
+        path = "/messages/in_thread/%d" % extract_id(thread_id)
         return self._client.get(path, **self._argument_converter(
             older_than=older_than,
             newer_than=newer_than,
@@ -188,7 +190,7 @@ class MessagesAPI(object):
         """
         Deletes the message identified by message_id.
         """
-        return self._client.delete("/messages/%d" % message_id)
+        return self._client.delete("/messages/%d" % extract_id(message_id))
 
     def like(self, message_id):
         """
@@ -196,7 +198,9 @@ class MessagesAPI(object):
         """
         return self._client.post(
             "/messages/liked_by/current",
-            message_id=message_id,
+            **self._argument_converter(
+                message_id=message_id,
+            )
         )
 
     def unlike(self, message_id):
@@ -206,5 +210,7 @@ class MessagesAPI(object):
         """
         return self._client.delete(
             "/messages/liked_by/current",
-            message_id=message_id,
+            **self._argument_converter(
+                message_id=message_id,
+            )
         )
