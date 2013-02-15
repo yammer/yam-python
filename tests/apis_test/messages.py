@@ -38,6 +38,12 @@ class MessagesAPIMessageListFetchingTest(TestCaseWithMockClient):
     def test_in_thread(self):
         self._test_list_fetch("/messages/in_thread/12345", self.messages_api.in_thread, 12345)
 
+    def test_in_thread_passing_id_as_a_dict(self):
+        self._test_list_fetch("/messages/in_thread/321", self.messages_api.in_thread, {"id": 321})
+
+    def test_in_thread_passing_id_as_an_object(self):
+        self._test_list_fetch("/messages/in_thread/223", self.messages_api.in_thread, Mock(id=223))
+
     def _test_list_fetch(self, path, method, *method_args):
         for kwargs in self.valid_message_list_arguments:
             messages = method(*method_args, **kwargs)
@@ -85,6 +91,34 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
             group_id=123,
             replied_to_id=456,
             direct_to_id=789,
+        )
+
+    def test_create_passing_ids_as_dicts(self):
+        self.messages_api.create(
+            body="Hello world",
+            group_id={"id": 123},
+            replied_to_id={"id": 456},
+            direct_to_id={"id": 789},
+        )
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages",
+            body="Hello world",
+            group_id=123,
+            replied_to_id=456,
+            direct_to_id=789,
+        )
+
+    def test_create_passing_ids_as_objects(self):
+        self.messages_api.create(
+            body="Hello world",
+            replied_to_id=Mock(id=37),
+        )
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages",
+            body="Hello world",
+            replied_to_id=37,
         )
 
     def test_create_message_with_topics(self):
@@ -156,6 +190,16 @@ class MessagesAPIDeleteTest(TestCaseWithMockClient):
         self.mock_client.delete.assert_called_once_with("/messages/3")
         self.assertEquals(self.mock_delete_response, response)
 
+    def test_delete_passing_id_as_a_dict(self):
+        self.messages_api.delete({"id": 27})
+
+        self.mock_client.delete.assert_called_once_with("/messages/27")
+
+    def test_delete_passing_id_as_an_object(self):
+        self.messages_api.delete(Mock(id=8))
+
+        self.mock_client.delete.assert_called_once_with("/messages/8")
+
 
 class MessagesAPILikeTest(TestCaseWithMockClient):
     def setUp(self):
@@ -171,6 +215,22 @@ class MessagesAPILikeTest(TestCaseWithMockClient):
         )
         self.assertEquals(self.mock_post_response, response)
 
+    def test_like_passing_id_as_a_dict(self):
+        self.messages_api.like({"id": 22})
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages/liked_by/current",
+            message_id=22,
+        )
+
+    def test_like_passing_id_as_an_object(self):
+        self.messages_api.like(Mock(id=77))
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages/liked_by/current",
+            message_id=77,
+        )
+
     def test_unlike(self):
         response = self.messages_api.unlike(42)
 
@@ -179,3 +239,19 @@ class MessagesAPILikeTest(TestCaseWithMockClient):
             message_id=42,
         )
         self.assertEquals(self.mock_delete_response, response)
+
+    def test_unlike_passing_id_as_a_dict(self):
+        self.messages_api.unlike({"id": 22})
+
+        self.mock_client.delete.assert_called_once_with(
+            "/messages/liked_by/current",
+            message_id=22,
+        )
+
+    def test_unlike_passing_id_as_an_object(self):
+        self.messages_api.unlike(Mock(id=77))
+
+        self.mock_client.delete.assert_called_once_with(
+            "/messages/liked_by/current",
+            message_id=77,
+        )

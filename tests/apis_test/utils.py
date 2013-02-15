@@ -2,7 +2,7 @@ from mock import Mock
 from unittest import TestCase
 
 from yampy.apis.utils import ArgumentConverter, flatten_lists, flatten_dicts, \
-                             stringify_booleans, none_filter
+                             stringify_booleans, none_filter, extract_ids
 
 
 class ArgumentConverterNoConvertersTest(TestCase):
@@ -105,6 +105,44 @@ class ArgumentConverterStringifyBooleansTest(TestCase):
 
         self.assertEquals("true", result["yes"])
         self.assertEquals("false", result["no"])
+
+
+class ArgumentConverterExtractIDsTest(TestCase):
+    """
+    Tests the ArgumentConverter using the extract_ids converter.
+    """
+
+    def setUp(self):
+        self.converter = ArgumentConverter(extract_ids)
+
+    def test_extracts_ids_from_objects(self):
+        result = self.converter(object_id=Mock(id=17))
+
+        self.assertEquals({"object_id": 17}, result)
+
+    def test_extracts_ids_from_dicts(self):
+        result = self.converter(dict_id={"id": 31})
+
+        self.assertEquals({"dict_id": 31}, result)
+
+    def test_accepts_primitive_ids(self):
+        result = self.converter(
+            string_id="123",
+            numeric_id=456,
+        )
+
+        self.assertEquals("123", result["string_id"])
+        self.assertEquals(456, result["numeric_id"])
+
+    def test_ignores_keys_without_an_id_suffix(self):
+        id_object = Mock(id=121)
+        result = self.converter(
+            an_object=id_object,
+            a_dict={"id": 45},
+        )
+
+        self.assertEquals(id_object, result["an_object"])
+        self.assertEquals({"id": 45}, result["a_dict"])
 
 
 class ArgumentConverterNoneFilterTest(TestCase):
