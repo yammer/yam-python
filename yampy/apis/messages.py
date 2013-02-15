@@ -163,6 +163,21 @@ class MessagesAPI(object):
             threaded=threaded,
         ))
 
+    def from_user(self, user_id, older_than=None, newer_than=None,
+                  limit=None, threaded=None):
+        """
+        Returns messages that were posted by the user identified by user_id.
+
+        See the "all" method for a description of the keyword arguments.
+        """
+        path = "/messages/from_user/%d" % extract_id(user_id)
+        return self._client.get(path, **self._argument_converter(
+            older_than=older_than,
+            newer_than=newer_than,
+            limit=limit,
+            threaded=threaded,
+        ))
+
     def create(self, body, group_id=None, replied_to_id=None,
                direct_to_id=None, topics=[], broadcast=None,
                open_graph_object={}):

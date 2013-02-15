@@ -61,6 +61,15 @@ class MessagesAPIMessageListFetchingTest(TestCaseWithMockClient):
     def test_in_thread_passing_id_as_an_object(self):
         self._test_list_fetch("/messages/in_thread/223", self.messages_api.in_thread, Mock(id=223))
 
+    def test_from_user(self):
+        self._test_list_fetch("/messages/from_user/42", self.messages_api.from_user, 42)
+
+    def test_from_user_passing_id_as_a_dict(self):
+        self._test_list_fetch("/messages/from_user/31", self.messages_api.from_user, {"id": 31})
+
+    def test_from_user_passing_id_as_an_object(self):
+        self._test_list_fetch("/messages/from_user/65", self.messages_api.from_user, Mock(id=65))
+
     def _test_list_fetch(self, path, method, *method_args):
         for kwargs in self.valid_message_list_arguments:
             messages = method(*method_args, **kwargs)

@@ -111,6 +111,7 @@ yammer.messages.sent()
 yammer.messages.private()
 yammer.messages.received()
 yammer.messages.in_thread(a_thread_id)
+yammer.messages.from_user(a_user_id)
 
 # Post a new message
 yammer.messages.create("Hello world!")
