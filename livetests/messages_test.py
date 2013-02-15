@@ -33,13 +33,13 @@ class MessagesIntegrationTest(TestCase):
         test_message = "The time is %s" % datetime.now()
 
         result = yammer.messages.create(body=test_message)
-        new_message = result["messages"][0]
-        self.assertEqual(new_message["body"]["plain"], test_message)
+        new_message = result.messages[0]
+        self.assertEqual(new_message.body.plain, test_message)
 
         all_messages = yammer.messages.all()
         self.assertIn(test_message, str(all_messages))
 
-        yammer.messages.delete(new_message["id"])
+        yammer.messages.delete(new_message.id)
 
         all_messages = yammer.messages.all()
         self.assertNotIn(test_message, str(all_messages))
