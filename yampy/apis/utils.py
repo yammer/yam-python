@@ -4,6 +4,8 @@ Utilities used by the various APIs.
 
 from functools import wraps
 
+from yampy.models import extract_id
+
 
 def instance_replacer(*types):
     """
@@ -71,6 +73,18 @@ def stringify_booleans(key, value):
         return {key: "true"}
     else:
         return {key: "false"}
+
+
+def extract_ids(arguments):
+    """
+    Attempts to extract an ID from the value of any key that ends in "_id".
+    e.g. {"foo_id": {"id": 3}}  becomes  {"foo_id": 3}
+    """
+    result = arguments.copy()
+    for key in arguments:
+        if key.endswith("_id"):
+            result[key] = extract_id(arguments[key])
+    return result
 
 
 @instance_replacer(type(None))

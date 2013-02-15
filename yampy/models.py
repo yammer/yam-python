@@ -26,3 +26,22 @@ class GenericModel(dict):
             return self[prop]
         else:
             raise AttributeError
+
+
+def extract_id(source):
+    """
+    Attempts to extract an ID from the argument, first by looking for an
+    attribute and then by using dictionary access. If both fail, the argument
+    is returned.
+    """
+    try:
+        return source.id
+    except AttributeError:
+        pass
+
+    try:
+        return source["id"]
+    except TypeError, KeyError:
+        pass
+
+    return source

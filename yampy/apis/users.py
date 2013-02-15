@@ -2,6 +2,7 @@ from yampy.apis.utils import ArgumentConverter, flatten_dicts, \
                              stringify_booleans, none_filter
 from yampy.errors import InvalidEducationRecordError, \
                          InvalidPreviousCompanyRecord
+from yampy.models import extract_id
 
 
 def education_argument_converter(arguments):
@@ -83,7 +84,7 @@ class UsersAPI(object):
         Use the page parameter to enable pagination and retrieve a specific
         page of users.
         """
-        path = "/users/in_group/%d" % group_id
+        path = "/users/in_group/%d" % extract_id(group_id)
         return self._client.get(path, **self._argument_converter(
             page=page,
         ))
@@ -103,7 +104,7 @@ class UsersAPI(object):
         """
         Returns the user identified by the given user_id.
         """
-        return self._client.get("/users/%d" % user_id)
+        return self._client.get("/users/%d" % extract_id(user_id))
 
     def find_by_email(self, email_address):
         """
@@ -164,7 +165,7 @@ class UsersAPI(object):
         For more information on parameter formats, see the ``new`` method.
         """
 
-        path = "/users/%d" % user_id
+        path = "/users/%d" % extract_id(user_id)
         return self._client.put(path, **self._argument_converter(
             full_name=full_name,
             job_title=job_title,
@@ -186,10 +187,10 @@ class UsersAPI(object):
         """
         Suspend the user identified by user_id.
         """
-        return self._client.delete("/users/%d" % user_id)
+        return self._client.delete("/users/%d" % extract_id(user_id))
 
     def delete(self, user_id):
         """
         Delete the user identified by user_id.
         """
-        return self._client.delete("/users/%d" % user_id, delete="true")
+        return self._client.delete("/users/%d" % extract_id(user_id), delete="true")

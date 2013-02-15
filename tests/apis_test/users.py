@@ -51,6 +51,16 @@ class UsersAPIInGroupTest(TestCaseWithMockClient):
         self.mock_client.get.assert_called_once_with("/users/in_group/194")
         self.assertEquals(self.mock_get_response, users)
 
+    def test_in_group_passing_id_as_a_dict(self):
+        self.users_api.in_group({"id": 14})
+
+        self.mock_client.get.assert_called_once_with("/users/in_group/14")
+
+    def test_in_group_passing_id_as_an_object(self):
+        self.users_api.in_group(Mock(id=44))
+
+        self.mock_client.get.assert_called_once_with("/users/in_group/44")
+
     def test_in_group_with_page(self):
         users = self.users_api.in_group(42, page=7)
 
@@ -92,6 +102,16 @@ class UsersAPIFindTest(TestCaseWithMockClient):
 
         self.mock_client.get.assert_called_once_with("/users/13")
         self.assertEquals(self.mock_get_response, found_user)
+
+    def test_find_passing_id_as_a_dict(self):
+        self.users_api.find({"id": 31})
+
+        self.mock_client.get.assert_called_once_with("/users/31")
+
+    def test_find_passing_id_as_an_object(self):
+        self.users_api.find(Mock(id=27))
+
+        self.mock_client.get.assert_called_once_with("/users/27")
 
     def test_find_by_email(self):
         found_user = self.users_api.find_by_email("user@example.org")
@@ -405,6 +425,28 @@ class UsersAPIUpdateTest(TestCaseWithMockClient):
                 ],
             )
 
+    def test_update_user_passing_id_as_a_dict(self):
+        self.users_api.update(
+            user_id={"id": 11},
+            full_name="Joe Bloggs",
+        )
+
+        self.mock_client.put.assert_called_once_with(
+            "/users/11",
+            full_name="Joe Bloggs",
+        )
+
+    def test_update_user_passing_id_as_an_object(self):
+        self.users_api.update(
+            user_id=Mock(id=117),
+            full_name="Joe Bloggs",
+        )
+
+        self.mock_client.put.assert_called_once_with(
+            "/users/117",
+            full_name="Joe Bloggs",
+        )
+
 
 class UsersAPISuspendAndDeleteTest(TestCaseWithMockClient):
     def setUp(self):
@@ -416,6 +458,16 @@ class UsersAPISuspendAndDeleteTest(TestCaseWithMockClient):
 
         self.mock_client.delete.assert_called_once_with("/users/123")
         self.assertEquals(self.mock_delete_response, suspend_result)
+
+    def test_suspend_passing_id_as_a_dict(self):
+        self.users_api.suspend({"id": 17})
+
+        self.mock_client.delete.assert_called_once_with("/users/17")
+
+    def test_suspend_passing_id_as_an_object(self):
+        self.users_api.suspend(Mock(id=12))
+
+        self.mock_client.delete.assert_called_once_with("/users/12")
 
     def test_delete(self):
         delete_result = self.users_api.delete(123)
