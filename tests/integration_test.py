@@ -29,7 +29,7 @@ class MessageIntegrationTest(TestCaseWithFakeYammerServer):
     def test_fetching_messages(self):
         message_result = self.yammer.messages.all()
 
-        self.assertEqual(3, len(message_result["messages"]))
+        self.assertEqual(3, len(message_result.messages))
 
     def test_creating_a_message(self):
         message_result = self.yammer.messages.create(
@@ -38,21 +38,21 @@ class MessageIntegrationTest(TestCaseWithFakeYammerServer):
             group_id=345,
         )
 
-        self.assertEqual(1, len(message_result["messages"]))
-        message = message_result["messages"][0]
+        self.assertEqual(1, len(message_result.messages))
+        message = message_result.messages[0]
 
-        self.assertEqual("Hello everyone!", message["body"]["plain"])
+        self.assertEqual("Hello everyone!", message.body.plain)
 
     def test_deleting_a_message(self):
         message_result = self.yammer.messages.all()
-        msg_id = message_result["messages"][0]["id"]
+        msg_id = message_result.messages[0].id
 
         deletion_result = self.yammer.messages.delete(msg_id)
         self.assertTrue(deletion_result)
 
     def test_liking_and_unliking_a_message(self):
         message_result = self.yammer.messages.all()
-        msg_id = message_result["messages"][0]["id"]
+        msg_id = message_result.messages[0].id
 
         like_result = self.yammer.messages.like(msg_id)
         self.assertTrue(like_result)
@@ -75,10 +75,10 @@ class UserIntegrationTest(TestCaseWithFakeYammerServer):
 
     def test_fetching_individual_users(self):
         current_user = self.yammer.users.find_current()
-        self.assertEqual("Joe Bloggs", current_user["full_name"])
+        self.assertEqual("Joe Bloggs", current_user.full_name)
 
         user_by_id = self.yammer.users.find(13)
-        self.assertEqual(13, user_by_id["id"])
+        self.assertEqual(13, user_by_id.id)
 
     def test_creating_a_user(self):
         user_result = self.yammer.users.create(
