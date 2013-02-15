@@ -15,13 +15,13 @@
 # See the Apache Version 2.0 License for specific language governing
 # permissions and limitations under the License.
 
-import json
-
 import requests
 
 from constants import DEFAULT_BASE_URL
 from errors import ResponseError, NotFoundError, InvalidAccessTokenError, \
     RateLimitExceededError, UnauthorizedError
+from models import GenericModel
+
 
 class Client(object):
     """
@@ -95,7 +95,7 @@ class Client(object):
 
     def _value_for_response(self, response):
         if response.text.strip():
-            return json.loads(response.text)
+            return GenericModel.from_json(response.text)
         else:
             return True
 

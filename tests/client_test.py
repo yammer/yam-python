@@ -21,6 +21,7 @@ from support.unit import HTTPHelpers
 from yampy import Client
 from yampy.errors import *
 
+
 class ClientGetTest(HTTPHelpers, TestCase):
     def test_get_parses_response_json(self):
         self.stub_get_requests(
@@ -30,7 +31,7 @@ class ClientGetTest(HTTPHelpers, TestCase):
 
         messages = client.get("/messages")
 
-        self.assertEqual(messages, {"messages": ["first", "second"]})
+        self.assertEqual(messages.messages, ["first", "second"])
 
     def test_get_uses_default_base_url(self):
         self.stub_get_requests()
@@ -129,7 +130,7 @@ class ClientPostTest(HTTPHelpers, TestCase):
 
         messages = client.post("/messages", body="Hello world")
 
-        self.assertEqual(messages, {"messages": ["first", "second"]})
+        self.assertEqual(messages.messages, ["first", "second"])
 
     def test_post_uses_default_base_url(self):
         self.stub_post_requests()
@@ -225,7 +226,7 @@ class ClientDeleteTest(HTTPHelpers, TestCase):
 
         response = client.delete("/messages/1")
 
-        self.assertEqual(response, {"deleted": True})
+        self.assertEqual(response.deleted, True)
 
     def test_delete_handles_success_with_a_blank_body(self):
         self.stub_delete_requests(response_status=200, response_body=" ")
@@ -332,7 +333,7 @@ class ClientPutTest(HTTPHelpers, TestCase):
 
         messages = client.put("/messages", body="Hello world")
 
-        self.assertEqual(messages, {"messages": ["first", "second"]})
+        self.assertEqual(messages.messages, ["first", "second"])
 
     def test_put_uses_default_base_url(self):
         self.stub_put_requests()
