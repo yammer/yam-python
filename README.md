@@ -116,6 +116,9 @@ yammer.messages.from_user(a_user_id)
 # Get a specific message
 yammer.messages.find(a_message_id)
 
+# Email a specific message to the logged in user
+yammer.messages.email(a_message_id)
+
 # Post a new message
 yammer.messages.create("Hello world!")
 yammer.messages.create("Hello developers", group_id=developers_group_id,

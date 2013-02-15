@@ -303,3 +303,34 @@ class MessagesAPILikeTest(TestCaseWithMockClient):
             "/messages/liked_by/current",
             message_id=77,
         )
+
+
+class MessagesAPIEmailTest(TestCaseWithMockClient):
+    def setUp(self):
+        super(MessagesAPIEmailTest, self).setUp()
+        self.messages_api = MessagesAPI(client=self.mock_client)
+
+    def test_email(self):
+        response = self.messages_api.email(13)
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages/email",
+            message_id=13,
+        )
+        self.assertEquals(self.mock_post_response, response)
+
+    def test_email_passing_id_as_a_dict(self):
+        self.messages_api.email({"id": 4})
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages/email",
+            message_id=4,
+        )
+
+    def test_email_passing_id_as_an_object(self):
+        self.messages_api.email(Mock(id=7))
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages/email",
+            message_id=7,
+        )

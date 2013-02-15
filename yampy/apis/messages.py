@@ -235,3 +235,11 @@ class MessagesAPI(object):
                 message_id=message_id,
             )
         )
+
+    def email(self, message_id):
+        """
+        Emails the message identified by message_id to the authenticated user.
+        """
+        return self._client.post("/messages/email", **self._argument_converter(
+            message_id=message_id,
+        ))
