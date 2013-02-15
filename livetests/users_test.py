@@ -21,7 +21,7 @@ Tests for getting and updating users.
 
 from unittest import TestCase
 
-from support import skip_without_environment_variable
+from livetests.support import skip_without_environment_variable
 import yampy
 
 

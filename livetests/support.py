@@ -19,6 +19,7 @@
 Shared support for live test cases.
 """
 
+from functools import wraps
 import os
 from unittest.case import SkipTest
 
@@ -34,6 +35,7 @@ def skip_without_environment_variable(variable):
     """
     def decorator(test_method):
         access_token = os.getenv(variable)
+        @wraps(test_method)
         def wrapper(self):
             if access_token:
                 test_method(self, access_token)
