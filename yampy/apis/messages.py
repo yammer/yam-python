@@ -190,6 +190,22 @@ class MessagesAPI(object):
         """
         Posts a new message to Yammer. Returns the new message in the same
         format as the various message listing methods ("all", "sent", etc.).
+
+        The following keyword arguments are supported:
+        group_id -- Send this message to the group identified by group_id.
+        replied_to_id -- This message is a reply to the message identified by
+            replied_to_id.
+        direct_to_id -- Send this as a direct message to the user identified by
+            direct_to_id.
+        topics -- A list of topics for the message. Topics should be given as
+            strings. There cannot be more than 20 topics for one message.
+        broadcast -- Set this to True to send a broadcast message. Only
+            network admins have permission to send broadcast messages.
+        open_graph_object -- A dict describing an open graph object to attach
+            to the message. The "url" key is required. Other supported keys
+            are: "title", "image", "description", "object_type", "site_name",
+            "fetch" (set to True to derive other OG data from the URL) and
+            "meta" (for custom structured data).
         """
         if len(topics) > 20:
             raise TooManyTopicsError("Too many topics, the maximum is 20")
