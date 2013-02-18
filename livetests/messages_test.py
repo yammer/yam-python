@@ -16,7 +16,7 @@
 # permissions and limitations under the License.
 
 """
-Tests for posting and reading messages.
+Tests for interacting with messages.
 """
 
 from datetime import datetime
@@ -43,3 +43,39 @@ class MessagesIntegrationTest(TestCase):
 
         all_messages = yammer.messages.all()
         self.assertNotIn(test_message, str(all_messages))
+
+    @skip_without_environment_variable("YAMMER_ACCESS_TOKEN")
+    def test_liking_and_unliking_messages(self, access_token):
+        yammer = yampy.Yammer(access_token)
+        message = self.message_not_liked_by_current_user(yammer)
+        me = yammer.users.find_current()
+
+        yammer.messages.like(message)
+        reloaded_message = yammer.messages.find(message)
+
+        self.assert_user_likes_message(me, reloaded_message)
+
+        yammer.messages.unlike(message)
+        reloaded_message = yammer.messages.find(message)
+
+        self.assert_user_does_not_like_message(me, reloaded_message)
+
+    def message_not_liked_by_current_user(self, yammer):
+        all_messages = yammer.messages.all().messages
+        me = yammer.users.find_current()
+        for message in all_messages:
+            liker_ids = self._user_ids_liking_message(message)
+            if me.id not in liker_ids:
+                return message
+        self.fail("The current user has liked all available messages")
+
+    def assert_user_likes_message(self, user, message):
+        liker_ids = self._user_ids_liking_message(message)
+        self.assertIn(user.id, liker_ids)
+
+    def assert_user_does_not_like_message(self, user, message):
+        liker_ids = self._user_ids_liking_message(message)
+        self.assertNotIn(user.id, liker_ids)
+
+    def _user_ids_liking_message(self, message):
+        return set([like.user_id for like in message.liked_by.names])
