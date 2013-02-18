@@ -71,21 +71,30 @@ class MessagesAPIMessageListFetchingTest(TestCaseWithMockClient):
         self._test_list_fetch("/messages/from_user/65", self.messages_api.from_user, Mock(id=65))
 
     def _test_list_fetch(self, path, method, *method_args):
-        for kwargs in self.valid_message_list_arguments:
-            messages = method(*method_args, **kwargs)
+        for method_kwargs, request_kwargs in self.valid_message_list_arguments:
+            messages = method(*method_args, **method_kwargs)
 
-            self.mock_client.get.assert_called_with(path, **kwargs)
+            self.mock_client.get.assert_called_with(path, **request_kwargs)
             self.assertEquals(self.mock_get_response, messages)
 
     @property
     def valid_message_list_arguments(self):
+        """
+        Returns tuples, each of which contains the kwargs to pass to a
+        MessagesAPI request method, and the kwargs that we expect to be passed
+        to the Client.get method as a result.
+        """
         return (
-            {},
-            {"older_than": 12345},
-            {"newer_than": 54321},
-            {"limit": 30},
-            {"threaded": "true"},
-            {"threaded": "extended"},
+            ({},                            {}),
+            ({"older_than": 12345},         {"older_than": 12345}),
+            ({"older_than": {"id": 7}},     {"older_than": 7}),
+            ({"older_than": Mock(id=2)},    {"older_than": 2}),
+            ({"newer_than": 54321},         {"newer_than": 54321}),
+            ({"newer_than": {"id": 7}},     {"newer_than": 7}),
+            ({"newer_than": Mock(id=2)},    {"newer_than": 2}),
+            ({"limit": 30},                 {"limit": 30}),
+            ({"threaded": True},            {"threaded": "true"}),
+            ({"threaded": "extended"},      {"threaded": "extended"}),
         )
 
 

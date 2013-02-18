@@ -16,8 +16,8 @@
 # permissions and limitations under the License.
 
 from yampy.errors import InvalidOpenGraphObjectError, TooManyTopicsError
-from yampy.apis.utils import ArgumentConverter, flatten_lists, flatten_dicts, \
-                             stringify_booleans, extract_ids, none_filter
+from yampy.apis.utils import ArgumentConverter, IDExtractor, flatten_lists, \
+                             flatten_dicts, stringify_booleans, none_filter
 from yampy.models import extract_id
 
 
@@ -34,7 +34,7 @@ class MessagesAPI(object):
         """
         self._client = client
         self._argument_converter = ArgumentConverter(
-            extract_ids,
+            IDExtractor(r"^(older|newer)_than|.*_id$"),
             flatten_lists,
             flatten_dicts,
             stringify_booleans,
