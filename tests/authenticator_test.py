@@ -23,6 +23,7 @@ from support.unit import HTTPHelpers
 from yampy import Authenticator
 from yampy.errors import *
 
+
 class AuthenticatorAuthorizationUrlTest(TestCase):
     def test_authorization_url_using_the_default_oauth_dialog_url(self):
         authenticator = Authenticator(

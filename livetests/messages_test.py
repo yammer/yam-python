@@ -22,7 +22,7 @@ Tests for posting and reading messages.
 from datetime import datetime
 from unittest import TestCase
 
-from support import skip_without_environment_variable
+from livetests.support import skip_without_environment_variable
 import yampy
 
 

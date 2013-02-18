@@ -47,6 +47,10 @@ Create a virtualenv:
     virtualenv ENV
     source ENV/bin/activate
 
+Install the development dependencies in your virtualenv:
+
+    pip install -r requirements_dev.txt
+
 When you're finished, deactivate the virtualenv:
 
     deactivate
@@ -56,12 +60,14 @@ When you're finished, deactivate the virtualenv:
 
 Run the whole test suite with:
 
-    python setup.py test -s tests
+    nosetests
 
-Run individual test modules or classes with:
+You can also pass the name of a module, class, or a path to a directory or
+file:
 
-    python setup.py test -s tests.client_test
-    python setup.py test -s tests.client_test.ClientGetTest
+    nosetests tests.apis.messages_test.MessagesAPICreateTest
+    nosetests tests/apis
+    nosetests tests/apis/messages_test.py
 
 There is also a live integration test suite. This shouldn't be run frequently
 during development, but is useful for checking that the assumptions made in the
@@ -69,7 +75,7 @@ client still match the live API. Since it is run against the live API and posts
 real messages, it requires an access token and shouldn't be run against an
 account that you are actively using. Run the live integration tests with:
 
-    YAMMER_ACCESS_TOKEN=abc123xyz python setup.py test -s livetests
+    YAMMER_ACCESS_TOKEN=abc123xyz nosetests livetests
 
 
 ## Development process
