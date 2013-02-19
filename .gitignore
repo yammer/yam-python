@@ -4,3 +4,4 @@ dist
 ENV
 MANIFEST
 yampy.egg-info
+docs/_build
