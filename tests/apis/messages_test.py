@@ -61,23 +61,63 @@ class MessagesAPIMessageListFetchingTest(TestCaseWithMockClient):
     def test_in_thread_passing_id_as_an_object(self):
         self._test_list_fetch("/messages/in_thread/223", self.messages_api.in_thread, Mock(id=223))
 
-    def _test_list_fetch(self, path, method, *method_args):
-        for kwargs in self.valid_message_list_arguments:
-            messages = method(*method_args, **kwargs)
+    def test_from_user(self):
+        self._test_list_fetch("/messages/from_user/42", self.messages_api.from_user, 42)
 
-            self.mock_client.get.assert_called_with(path, **kwargs)
+    def test_from_user_passing_id_as_a_dict(self):
+        self._test_list_fetch("/messages/from_user/31", self.messages_api.from_user, {"id": 31})
+
+    def test_from_user_passing_id_as_an_object(self):
+        self._test_list_fetch("/messages/from_user/65", self.messages_api.from_user, Mock(id=65))
+
+    def _test_list_fetch(self, path, method, *method_args):
+        for method_kwargs, request_kwargs in self.valid_message_list_arguments:
+            messages = method(*method_args, **method_kwargs)
+
+            self.mock_client.get.assert_called_with(path, **request_kwargs)
             self.assertEquals(self.mock_get_response, messages)
 
     @property
     def valid_message_list_arguments(self):
+        """
+        Returns tuples, each of which contains the kwargs to pass to a
+        MessagesAPI request method, and the kwargs that we expect to be passed
+        to the Client.get method as a result.
+        """
         return (
-            {},
-            {"older_than": 12345},
-            {"newer_than": 54321},
-            {"limit": 30},
-            {"threaded": "true"},
-            {"threaded": "extended"},
+            ({},                            {}),
+            ({"older_than": 12345},         {"older_than": 12345}),
+            ({"older_than": {"id": 7}},     {"older_than": 7}),
+            ({"older_than": Mock(id=2)},    {"older_than": 2}),
+            ({"newer_than": 54321},         {"newer_than": 54321}),
+            ({"newer_than": {"id": 7}},     {"newer_than": 7}),
+            ({"newer_than": Mock(id=2)},    {"newer_than": 2}),
+            ({"limit": 30},                 {"limit": 30}),
+            ({"threaded": True},            {"threaded": "true"}),
+            ({"threaded": "extended"},      {"threaded": "extended"}),
         )
+
+
+class MessagesAPIFindTest(TestCaseWithMockClient):
+    def setUp(self):
+        super(MessagesAPIFindTest, self).setUp()
+        self.messages_api = MessagesAPI(client=self.mock_client)
+
+    def test_find(self):
+        message = self.messages_api.find(121)
+
+        self.mock_client.get.assert_called_with("/messages/121")
+        self.assertEquals(self.mock_get_response, message)
+
+    def test_find_passing_id_as_a_dict(self):
+        self.messages_api.find({"id": 33})
+
+        self.mock_client.get.assert_called_with("/messages/33")
+
+    def test_find_passing_id_as_an_object(self):
+        self.messages_api.find(Mock(id=2))
+
+        self.mock_client.get.assert_called_with("/messages/2")
 
 
 class MessagesAPICreateTest(TestCaseWithMockClient):
@@ -271,4 +311,35 @@ class MessagesAPILikeTest(TestCaseWithMockClient):
         self.mock_client.delete.assert_called_once_with(
             "/messages/liked_by/current",
             message_id=77,
+        )
+
+
+class MessagesAPIEmailTest(TestCaseWithMockClient):
+    def setUp(self):
+        super(MessagesAPIEmailTest, self).setUp()
+        self.messages_api = MessagesAPI(client=self.mock_client)
+
+    def test_email(self):
+        response = self.messages_api.email(13)
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages/email",
+            message_id=13,
+        )
+        self.assertEquals(self.mock_post_response, response)
+
+    def test_email_passing_id_as_a_dict(self):
+        self.messages_api.email({"id": 4})
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages/email",
+            message_id=4,
+        )
+
+    def test_email_passing_id_as_an_object(self):
+        self.messages_api.email(Mock(id=7))
+
+        self.mock_client.post.assert_called_once_with(
+            "/messages/email",
+            message_id=7,
         )

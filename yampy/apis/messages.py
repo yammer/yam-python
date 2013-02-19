@@ -16,8 +16,8 @@
 # permissions and limitations under the License.
 
 from yampy.errors import InvalidOpenGraphObjectError, TooManyTopicsError
-from yampy.apis.utils import ArgumentConverter, flatten_lists, flatten_dicts, \
-                             stringify_booleans, extract_ids, none_filter
+from yampy.apis.utils import ArgumentConverter, IDExtractor, flatten_lists, \
+                             flatten_dicts, stringify_booleans, none_filter
 from yampy.models import extract_id
 
 
@@ -34,7 +34,7 @@ class MessagesAPI(object):
         """
         self._client = client
         self._argument_converter = ArgumentConverter(
-            extract_ids,
+            IDExtractor(r"^(older|newer)_than|.*_id$"),
             flatten_lists,
             flatten_dicts,
             stringify_booleans,
@@ -163,12 +163,49 @@ class MessagesAPI(object):
             threaded=threaded,
         ))
 
+    def from_user(self, user_id, older_than=None, newer_than=None,
+                  limit=None, threaded=None):
+        """
+        Returns messages that were posted by the user identified by user_id.
+
+        See the "all" method for a description of the keyword arguments.
+        """
+        path = "/messages/from_user/%d" % extract_id(user_id)
+        return self._client.get(path, **self._argument_converter(
+            older_than=older_than,
+            newer_than=newer_than,
+            limit=limit,
+            threaded=threaded,
+        ))
+
+    def find(self, message_id):
+        """
+        Returns the message identified by the given message_id.
+        """
+        return self._client.get("/messages/%d" % extract_id(message_id))
+
     def create(self, body, group_id=None, replied_to_id=None,
                direct_to_id=None, topics=[], broadcast=None,
                open_graph_object={}):
         """
         Posts a new message to Yammer. Returns the new message in the same
         format as the various message listing methods ("all", "sent", etc.).
+
+        The following keyword arguments are supported:
+        group_id -- Send this message to the group identified by group_id.
+        replied_to_id -- This message is a reply to the message identified by
+            replied_to_id.
+        direct_to_id -- Send this as a direct message to the user identified by
+            direct_to_id.
+        topics -- A list of topics for the message. Topics should be given as
+            strings. There cannot be more than 20 topics for one message.
+        broadcast -- Set this to True to send a broadcast message. Only
+            network admins have permission to send broadcast messages.
+        open_graph_object -- A dict describing an open graph object to attach
+            to the message. The "url" key is required. Other supported keys
+            are: "title", "image", "description", "object_type", "site_name",
+            "fetch" (set to True to derive other OG data from the URL) and
+            "meta" (for custom structured data).
         """
         if len(topics) > 20:
             raise TooManyTopicsError("Too many topics, the maximum is 20")
@@ -214,3 +251,11 @@ class MessagesAPI(object):
                 message_id=message_id,
             )
         )
+
+    def email(self, message_id):
+        """
+        Emails the message identified by message_id to the authenticated user.
+        """
+        return self._client.post("/messages/email", **self._argument_converter(
+            message_id=message_id,
+        ))

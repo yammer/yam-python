@@ -20,6 +20,7 @@ Utilities used by the various APIs.
 """
 
 from functools import wraps
+import re
 
 from yampy.models import extract_id
 
@@ -92,18 +93,6 @@ def stringify_booleans(key, value):
         return {key: "false"}
 
 
-def extract_ids(arguments):
-    """
-    Attempts to extract an ID from the value of any key that ends in "_id".
-    e.g. {"foo_id": {"id": 3}}  becomes  {"foo_id": 3}
-    """
-    result = arguments.copy()
-    for key in arguments:
-        if key.endswith("_id"):
-            result[key] = extract_id(arguments[key])
-    return result
-
-
 @instance_replacer(type(None))
 def none_filter(key, value):
     """
@@ -111,6 +100,30 @@ def none_filter(key, value):
     e.g. {"number": 1, "none": None}  becomes  {"number": 1}
     """
     return {}
+
+
+class IDExtractor(object):
+    """
+    A callable object which, when called with a dict, will attempt to extract
+    an ID from each value whose key matches the regular expression provided to
+    the constructor.
+    """
+
+    def __init__(self, pattern=r'^.*_id$'):
+        self._key_matcher = re.compile(pattern)
+
+    def __call__(self, arguments):
+        """
+        Attempts to extract an ID from the value of any key that matches the
+        pattern that was provided to the initialiser.
+        e.g. With the default pattern of '^.*_id$'
+             {"foo_id": {"id": 3}}  becomes  {"foo_id": 3}
+        """
+        result = arguments.copy()
+        for key in arguments:
+            if self._key_matcher.match(key):
+                result[key] = extract_id(arguments[key])
+        return result
 
 
 class ArgumentConverter(object):

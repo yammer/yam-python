@@ -18,8 +18,8 @@
 from mock import Mock
 from unittest import TestCase
 
-from yampy.apis.utils import ArgumentConverter, flatten_lists, flatten_dicts, \
-                             stringify_booleans, none_filter, extract_ids
+from yampy.apis.utils import ArgumentConverter, IDExtractor, flatten_lists, \
+                             flatten_dicts, stringify_booleans, none_filter
 
 
 class ArgumentConverterNoConvertersTest(TestCase):
@@ -126,11 +126,11 @@ class ArgumentConverterStringifyBooleansTest(TestCase):
 
 class ArgumentConverterExtractIDsTest(TestCase):
     """
-    Tests the ArgumentConverter using the extract_ids converter.
+    Tests the ArgumentConverter using the IDExtractor converter.
     """
 
     def setUp(self):
-        self.converter = ArgumentConverter(extract_ids)
+        self.converter = ArgumentConverter(IDExtractor())
 
     def test_extracts_ids_from_objects(self):
         result = self.converter(object_id=Mock(id=17))
@@ -160,6 +160,20 @@ class ArgumentConverterExtractIDsTest(TestCase):
 
         self.assertEquals(id_object, result["an_object"])
         self.assertEquals({"id": 45}, result["a_dict"])
+
+    def test_using_a_custom_regular_expression(self):
+        converter = ArgumentConverter(IDExtractor(r'^(older|newer)_than$'))
+        result = converter(
+            older_than={"id": 1},
+            newer_than={"id": 2},
+            older_or_newer_than={"id": 3},
+            message_id={"id": 4},
+        )
+
+        self.assertEquals(1, result["older_than"])
+        self.assertEquals(2, result["newer_than"])
+        self.assertEquals({"id": 3}, result["older_or_newer_than"])
+        self.assertEquals({"id": 4}, result["message_id"])
 
 
 class ArgumentConverterNoneFilterTest(TestCase):
