@@ -98,6 +98,6 @@ class Authenticator(object):
         """
         access_data = self.fetch_access_data(code)
         try:
-            return access_data["access_token"]["token"]
-        except KeyError:
+            return access_data.access_token.token
+        except AttributeError:
             raise ResponseError("Unexpected response format")
