@@ -31,6 +31,8 @@ setup(
     name="yampy",
     version=VERSION,
     description="The official Python client for Yammer's API",
+    author="Yammer",
+    author_email="blyttle@yammer-inc.com",
     long_description=readme(),
     packages=["yampy"],
     install_requires=["requests"],
