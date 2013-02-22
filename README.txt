@@ -27,11 +27,11 @@ Usage
 -----
 
 See the quickstart guide:
-https://github.com/yammer/yam-python/blob/master/docs/quickstart.rst
+http://pythonhosted.org/yampy/quickstart.html
 
 
 Contributing
 ------------
 
 See the contributing guide:
-https://github.com/yammer/yam-python/blob/master/docs/contributing.rst
+http://pythonhosted.org/yampy/contributing.html
