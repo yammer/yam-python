@@ -2,3 +2,4 @@ nose
 mock
 flask
 requests
+Sphinx

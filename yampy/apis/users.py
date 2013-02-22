@@ -61,6 +61,12 @@ def previous_companies_argument_converter(arguments):
 
 
 class UsersAPI(object):
+    """
+    Provides an interface for accessing the user related endpoints of the
+    Yammer API. You should not instantiate this class directly; use the
+    :meth:`yampy.Yammer.users` method instead.
+    """
+
     def __init__(self, client):
         """
         Initializes a new UsersAPI that will use the given client object
@@ -80,11 +86,12 @@ class UsersAPI(object):
         Returns all the users in the current user's network.
 
         Customize the response using the keyword arguments:
-        page -- Enable pagination, and return the nth page of 50 users.
-        letter -- Only return users whose username begins with this letter.
-        sort_by -- Sort users by "messages" or "followers" (default order is
-            alphabetical by username).
-        reverse -- Reverse sort order.
+
+        * page -- Enable pagination, and return the nth page of 50 users.
+        * letter -- Only return users whose username begins with this letter.
+        * sort_by -- Sort users by "messages" or "followers" (default order is
+          alphabetical by username).
+        * reverse -- Reverse sort order.
         """
         return self._client.get("/users", **self._argument_converter(
             page=page,
@@ -141,15 +148,16 @@ class UsersAPI(object):
 
         Most of the parameter names are self explanatory, and accept strings. A
         few expect specific formats:
-        im -- Provide instant messages details as a dict with "provider" and
-            "username" keys, e.g.
-            {"provider": "gtalk", "username": "me@gmail.com"}
-        education -- Provide education details as a list of dicts. Each dict
-            should have the keys: school, degree, description, start_year and
-            end_year.
-        previous_companies -- Provide previous employment details as a list of
-            dicts. Each dict should have the keys: company, position,
-            start_year, end_year
+
+        * ``im`` -- Provide instant messages details as a dict with ``provider``
+          and ``username`` keys, e.g.
+          ``{"provider": "gtalk", "username": "me@gmail.com"}``
+        * ``education`` -- Provide education details as a list of dicts. Each
+          dict should have the keys: ``school``, ``degree``, ``description``,
+          ``start_year`` and ``end_year``.
+        * ``previous_companies`` -- Provide previous employment details as a
+          list of dicts. Each dict should have the keys: ``company``,
+          ``position``, ``start_year``, ``end_year``.
         """
 
         return self._client.post("/users", **self._argument_converter(
@@ -179,7 +187,8 @@ class UsersAPI(object):
         """
         Updates the user identified by the given user_id.
 
-        For more information on parameter formats, see the ``new`` method.
+        For more information on parameter formats, see the :meth:`create`
+        method.
         """
 
         path = self._user_path(user_id)

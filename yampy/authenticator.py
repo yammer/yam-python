@@ -26,11 +26,12 @@ class Authenticator(object):
     Responsible for authenticating users against the Yammer API.
 
     The OAuth2 authentication process involves several steps:
-    1. Send the user to the URL returned by authorization_url. They can use
+
+    1. Send the user to the URL returned by ``authorization_url``. They can use
        this page to grant your application access to their account.
-    2. Yammer redirects them to the redirect_uri you provided with a code that
-       can be exchanged for an access token.
-    3. Exchange the code for an access token using the fetch_access_token
+    2. Yammer redirects them to the ``redirect_uri`` you provided with a code
+       that can be exchanged for an access token.
+    3. Exchange the code for an access token using the ``fetch_access_token``
        method.
     """
 
@@ -45,10 +46,10 @@ class Authenticator(object):
         class, e.g. to avoid hitting the live API from a client application's
         test suite. Pass None to use the default URLs.
 
-        oauth_dialog_url -- The URL the user must visit to authorize the
-            application. Used by the authorization_url method.
-        oauth_base_url -- The base URL for OAuth API requests, e.g. token
-            exchange. Used by fetch_access_data or fetch_access_token.
+        * ``oauth_dialog_url`` -- The URL the user must visit to authorize the
+          application. Used by the authorization_url method.
+        * ``oauth_base_url`` -- The base URL for OAuth API requests, e.g. token
+          exchange. Used by ``fetch_access_data`` or ``fetch_access_token``.
         """
         self._client_id = client_id
         self._client_secret = client_secret
@@ -59,7 +60,7 @@ class Authenticator(object):
         """
         Returns the URL the user needs to visit to grant your application
         access to their Yammer account. When they are done they will be
-        redirected to the redirect_uri you provide with a code that can be
+        redirected to the ``redirect_uri`` you provide with a code that can be
         exchanged for an access token.
         """
         query = urlencode({
@@ -73,11 +74,10 @@ class Authenticator(object):
         Returns the complete response from the Yammer API access token request.
         This is a dict with "user", "network" and "access_token" keys.
 
-        You can access the token itself as:
-            response["access_token"]["token"]
+        You can access the token itself as: ``response.access_token.token``
 
-        If you only intend to make use of the token, you should use the
-        fetch_access_token method instead.
+        If you only intend to make use of the token, you can use the
+        ``fetch_access_token`` method instead for convenience.
         """
         client = Client(base_url=self._oauth_base_url)
         return client.get(
@@ -94,10 +94,10 @@ class Authenticator(object):
         access token.
 
         If you require user and network information, you should use the
-        fetch_access_data method instead.
+        ``fetch_access_data`` method instead.
         """
         access_data = self.fetch_access_data(code)
         try:
-            return access_data["access_token"]["token"]
-        except KeyError:
+            return access_data.access_token.token
+        except AttributeError:
             raise ResponseError("Unexpected response format")

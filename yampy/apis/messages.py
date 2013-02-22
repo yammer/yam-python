@@ -24,12 +24,13 @@ from yampy.models import extract_id
 class MessagesAPI(object):
     """
     Provides an interface for accessing the message related endpoints of the
-    Yammer API.
+    Yammer API. You should not instantiate this class directly; use the
+    :meth:`yampy.Yammer.messages` method instead.
     """
 
     def __init__(self, client):
         """
-        Initializes a new MessagesAPI that will use the given client object
+        Initializes a new MessagesAPI that will use the given ``client`` object
         to make HTTP requests.
         """
         self._client = client
@@ -47,12 +48,13 @@ class MessagesAPI(object):
         Returns public messages from the current user's network.
 
         Customize the response using the keyword arguments:
-        older_than -- Only fetch messages older than this message ID.
-        newer_than -- Only fetch messages newer than this message ID.
-        limit -- Only fetch this many messages.
-        threaded -- Set to "true" to only receive the first message of each
-            thread, or to "extended" to recieve the first and two newest
-            messages from each thread.
+
+        * ``older_than`` -- Only fetch messages older than this message ID.
+        * ``newer_than`` -- Only fetch messages newer than this message ID.
+        * ``limit`` -- Only fetch this many messages.
+        * ``threaded`` -- Set to ``True`` to only receive the first message of
+          each thread, or to ``"extended"`` to recieve the first and two newest
+          messages from each thread.
         """
         return self._client.get("/messages", **self._argument_converter(
             older_than=older_than,
@@ -65,10 +67,10 @@ class MessagesAPI(object):
                      limit=None, threaded=None):
         """
         Returns messages from the current user's feed. This will either
-        correspond to from_top_conversations or from_followed_conversations
-        depending on the user's settings.
+        correspond to :meth:`from_top_conversations` or
+        :meth:`from_followed_conversations` depending on the user's settings.
 
-        See the "all" method for a description of the keyword arguments.
+        See the :meth:`all` method for a description of the keyword arguments.
         """
         return self._client.get("/messages/my_feed", **self._argument_converter(
             older_than=older_than,
@@ -82,7 +84,7 @@ class MessagesAPI(object):
         """
         Returns messages from the current user's top conversations.
 
-        See the "all" method for a description of the keyword arguments.
+        See the :meth:`all` method for a description of the keyword arguments.
         """
         return self._client.get("/messages/algo", **self._argument_converter(
             older_than=older_than,
@@ -97,7 +99,7 @@ class MessagesAPI(object):
         Returns messages from users the current user follows, or groups
         the current user belongs to.
 
-        See the "all" method for a description of the keyword arguments.
+        See the :meth:`all` method for a description of the keyword arguments.
         """
         return self._client.get("/messages/following", **self._argument_converter(
             older_than=older_than,
@@ -111,7 +113,7 @@ class MessagesAPI(object):
         """
         Returns of the current user's sent messages.
 
-        See the "all" method for a description of the keyword arguments.
+        See the :meth:`all` method for a description of the keyword arguments.
         """
         return self._client.get("/messages/sent", **self._argument_converter(
             older_than=older_than,
@@ -125,7 +127,7 @@ class MessagesAPI(object):
         """
         Returns of the private messages received by the current user.
 
-        See the "all" method for a description of the keyword arguments.
+        See the :meth:`all` method for a description of the keyword arguments.
         """
         return self._client.get("/messages/private", **self._argument_converter(
             older_than=older_than,
@@ -139,7 +141,7 @@ class MessagesAPI(object):
         """
         Returns messages received by the current user.
 
-        See the "all" method for a description of the keyword arguments.
+        See the :meth:`all` method for a description of the keyword arguments.
         """
         return self._client.get("/messages/received", **self._argument_converter(
             older_than=older_than,
@@ -153,7 +155,7 @@ class MessagesAPI(object):
         """
         Returns messages that belong to the thread identified by thread_id.
 
-        See the "all" method for a description of the keyword arguments.
+        See the :meth:`all` method for a description of the keyword arguments.
         """
         path = "/messages/in_thread/%d" % extract_id(thread_id)
         return self._client.get(path, **self._argument_converter(
@@ -168,7 +170,7 @@ class MessagesAPI(object):
         """
         Returns messages that were posted by the user identified by user_id.
 
-        See the "all" method for a description of the keyword arguments.
+        See the :meth:`all` method for a description of the keyword arguments.
         """
         path = "/messages/from_user/%d" % extract_id(user_id)
         return self._client.get(path, **self._argument_converter(
@@ -189,23 +191,30 @@ class MessagesAPI(object):
                open_graph_object={}):
         """
         Posts a new message to Yammer. Returns the new message in the same
-        format as the various message listing methods ("all", "sent", etc.).
+        format as the various message listing methods (:meth:`all`,
+        :meth:`sent`, etc.).
 
         The following keyword arguments are supported:
-        group_id -- Send this message to the group identified by group_id.
-        replied_to_id -- This message is a reply to the message identified by
-            replied_to_id.
-        direct_to_id -- Send this as a direct message to the user identified by
-            direct_to_id.
-        topics -- A list of topics for the message. Topics should be given as
-            strings. There cannot be more than 20 topics for one message.
-        broadcast -- Set this to True to send a broadcast message. Only
-            network admins have permission to send broadcast messages.
-        open_graph_object -- A dict describing an open graph object to attach
-            to the message. The "url" key is required. Other supported keys
-            are: "title", "image", "description", "object_type", "site_name",
-            "fetch" (set to True to derive other OG data from the URL) and
-            "meta" (for custom structured data).
+
+        * ``group_id`` -- Send this message to the group identified by group_id.
+        * ``replied_to_id`` -- This message is a reply to the message
+          identified by replied_to_id.
+        * ``direct_to_id`` -- Send this as a direct message to the user
+          identified by direct_to_id.
+        * ``topics`` -- A list of topics for the message. Topics should be
+          given as strings. There cannot be more than 20 topics for one message.
+        * ``broadcast`` -- Set this to True to send a broadcast message. Only
+          network admins have permission to send broadcast messages.
+        * ``open_graph_object`` -- A dict describing an open graph object to
+          attach to the message. It supports the following keys:
+           * ``url`` (*required*)
+           * ``title``
+           * ``image``
+           * ``description``
+           * ``object_type``
+           * ``site_name``
+           * ``fetch`` (set to ``True`` to derive other OG data from the URL)
+           * ``meta`` (for custom structured data)
         """
         if len(topics) > 20:
             raise TooManyTopicsError("Too many topics, the maximum is 20")
