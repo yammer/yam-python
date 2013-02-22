@@ -1,7 +1,7 @@
 Yampy
 =====
 
-Yampy (“Yam Pie”) is the official Python library for interacting with Yammer's
+Yampy ("Yam Pie") is the official Python library for interacting with Yammer's
 API.
 
 
