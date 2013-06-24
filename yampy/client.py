@@ -17,10 +17,10 @@
 
 import requests
 
-from constants import DEFAULT_BASE_URL
-from errors import ResponseError, NotFoundError, InvalidAccessTokenError, \
+from .constants import DEFAULT_BASE_URL
+from .errors import ResponseError, NotFoundError, InvalidAccessTokenError, \
     RateLimitExceededError, UnauthorizedError
-from models import GenericModel
+from .models import GenericModel
 
 
 class Client(object):

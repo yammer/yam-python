@@ -44,7 +44,7 @@ def instance_replacer(*types):
         @wraps(func)
         def inner(arguments):
             result = {}
-            for k, v in arguments.iteritems():
+            for k, v in arguments.items():
                 if isinstance(v, types):
                     result.update(func(k, v))
                 else:
@@ -61,7 +61,7 @@ def flatten_dicts(prefix, collection):
     e.g. {"foo": {"bar": 1}}  becomes  {"foo_bar": 1}
     """
     result = {}
-    for key, value in collection.iteritems():
+    for key, value in collection.items():
         item_key = "%s_%s" % (prefix, key)
         result[item_key] = value
     return result
