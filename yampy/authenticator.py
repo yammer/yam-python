@@ -15,7 +15,10 @@
 # See the Apache Version 2.0 License for specific language governing
 # permissions and limitations under the License.
 
-from urllib.parse import urlencode
+try:
+    from urllib.parse import urlencode  # Python 3
+except ImportError:
+    from urllib import urlencode        # Python 2
 
 from .constants import DEFAULT_OAUTH_BASE_URL, DEFAULT_OAUTH_DIALOG_URL
 from .client import Client
