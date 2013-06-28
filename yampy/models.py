@@ -58,7 +58,7 @@ def extract_id(source):
 
     try:
         return source["id"]
-    except TypeError, KeyError:
+    except (TypeError, KeyError) as err:
         pass
 
     return source

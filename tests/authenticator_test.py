@@ -17,9 +17,13 @@
 
 import json
 from unittest import TestCase
-from urlparse import urlparse, parse_qs
 
-from support.unit import HTTPHelpers
+try:
+    from urlparse import urlparse, parse_qs     # Python 2
+except ImportError:
+    from urllib.parse import urlparse, parse_qs # Python 3
+
+from .support.unit import HTTPHelpers
 from yampy import Authenticator
 from yampy.errors import *
 

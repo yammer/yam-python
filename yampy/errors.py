@@ -19,7 +19,7 @@
 Exception classes representing error responses from the Yammer API.
 """
 
-class ResponseError(StandardError):
+class ResponseError(Exception):
     """
     Raised when the Yammer API responds with an HTTP error, and there
     isn't a more specific subclass that represents the situation.
@@ -58,7 +58,7 @@ class RateLimitExceededError(ResponseError):
     pass
 
 
-class InvalidMessageError(StandardError):
+class InvalidMessageError(Exception):
     """
     Super class for the various kinds of errors that can occur when creating
     a message.
@@ -80,7 +80,7 @@ class InvalidOpenGraphObjectError(InvalidMessageError):
     """
     pass
 
-class InvalidUserError(StandardError):
+class InvalidUserError(Exception):
     """
     Super class for the various kinds of errors that can occur when creating
     a user.

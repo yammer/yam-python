@@ -19,5 +19,5 @@
 API classes which make requests to a group of Yammer API endpoints.
 """
 
-from messages import MessagesAPI
-from users import UsersAPI
+from .messages import MessagesAPI
+from .users import UsersAPI
