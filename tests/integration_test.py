@@ -19,7 +19,7 @@
 Tests for excercising the whole system in concert.
 """
 
-from support.integration import TestCaseWithFakeYammerServer
+from .support.integration import TestCaseWithFakeYammerServer
 import yampy
 
 

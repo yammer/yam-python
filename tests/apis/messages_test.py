@@ -195,7 +195,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
         with self.assertRaises(TooManyTopicsError):
             self.messages_api.create(
                 body="This message has 21 topics",
-                topics=["topic %d" % i for i in xrange(21)],
+                topics=["topic %d" % i for i in range(21)],
             )
 
     def test_create_broadcast_message(self):
