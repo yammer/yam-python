@@ -34,7 +34,7 @@ setup(
     author="Yammer",
     author_email="blyttle@yammer-inc.com",
     long_description=readme(),
-    packages=["yampy"],
+    packages=["yampy", "yampy.apis"],
     install_requires=["requests"],
     license="Apache",
     url="http://github.com/yammer/yam-python",
