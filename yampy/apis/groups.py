@@ -1,4 +1,4 @@
-from yampy.apis.utils import ArgumentConverter, none_filter
+from yampy.apis.utils import ArgumentConverter, none_filter, stringify_booleans
 from yampy.models import extract_id
 
 
@@ -17,7 +17,7 @@ class GroupsAPI(object):
         """
         self._client = client
         self._argument_converter = ArgumentConverter(
-            none_filter,
+            none_filter, stringify_booleans,
         )
 
     def all(self, mine=None, reverse=None):
