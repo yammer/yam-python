@@ -40,7 +40,7 @@ class GroupsAPI(object):
         """
         return self._client.get(self._group_path(group_id))
 
-    def members(self, group_id, page=None):
+    def members(self, group_id, page=None, reverse=None):
         """
         Returns the group identified by the given group_id.
 
@@ -48,9 +48,34 @@ class GroupsAPI(object):
 
         * page -- Enable pagination, and return the nth page of 50 users.
         """
-        path = "/groups/%d/members" % extract_id(group_id)
+        path = "/group_memberships"
         return self._client.get(path, **self._argument_converter(
             page=page,
+            reverse=reverse,
+        ))
+
+    def join(self, group_id):
+        """
+        Join the group identified by the given group_id.
+
+        Return True
+        """
+        path = "/group_memberships"
+        group_id = extract_id(group_id)
+        return self._client.post(path, **self._argument_converter(
+            group_id=group_id,
+        ))
+
+    def leave(self, group_id):
+        """
+        Leave the group identified by the given group_id.
+
+        Return True
+        """
+        path = "/group_memberships"
+        group_id = extract_id(group_id)
+        return self._client.delete(path, **self._argument_converter(
+            group_id=group_id,
         ))
 
     def _group_path(self, group_id):
