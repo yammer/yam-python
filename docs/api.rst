@@ -31,6 +31,13 @@ UsersAPI object
 .. autoclass:: UsersAPI
    :members:
 
+GroupsAPI object
+---------------
+
+.. module:: yampy.apis
+.. autoclass:: GroupsAPI
+   :members:
+
 Client object
 -------------
 
