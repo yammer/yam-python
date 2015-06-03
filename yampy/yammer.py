@@ -15,10 +15,12 @@
 # See the Apache Version 2.0 License for specific language governing
 # permissions and limitations under the License.
 
-from .apis import MessagesAPI, UsersAPI
+from .apis import MessagesAPI, UsersAPI, GroupsAPI
 from .client import Client
 
+
 class Yammer(object):
+
     """
     Main entry point for accessing the Yammer API.
 
@@ -70,3 +72,13 @@ class Yammer(object):
         if not hasattr(self, "_users_api"):
             self._users_api = UsersAPI(client=self._client)
         return self._users_api
+
+    @property
+    def groups(self):
+        """
+        Returns a :class:`yampy.apis.GroupsAPI` object which can be used to call
+        the Yammer API's user-related endpoints.
+        """
+        if not hasattr(self, "_groups_api"):
+            self._groups_api = GroupsAPI(client=self._client)
+        return self._groups_api
