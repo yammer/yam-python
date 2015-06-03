@@ -12,7 +12,7 @@ class GroupsAPI(object):
 
     def __init__(self, client):
         """
-        Initializes a new UsersAPI that will use the given client object
+        Initializes a new GroupsAPI that will use the given client object
         to make HTTP requests.
         """
         self._client = client
@@ -77,6 +77,26 @@ class GroupsAPI(object):
         return self._client.delete(path, **self._argument_converter(
             group_id=group_id,
         ))
+
+    def create(self, name, private=False):
+        """
+        Create a group.
+
+        Return Group info
+        """
+        path = "/groups"
+        return self._client.post(path, **self._argument_converter(
+            name=name,
+            private=private,
+        ))
+
+    def delete(self, group_id):
+        """
+        Delete a group.
+
+        Return True if success
+        """
+        return self._client.delete(self._group_path(group_id), delete="true")
 
     def _group_path(self, group_id):
         return "/groups/%d" % extract_id(group_id)
