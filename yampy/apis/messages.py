@@ -108,6 +108,21 @@ class MessagesAPI(object):
             threaded=threaded,
         ))
 
+    def from_group(self, group_id, older_than=None, newer_than=None,
+                   limit=None, threaded=None):
+        """
+        Returns messages from specific group, specified with `group_id`.
+
+        See the :meth:`all` method for a description of the keyword arguments.
+        """
+        path = "/messages/in_group/%d" % extract_id(group_id)
+        return self._client.get(path, **self._argument_converter(
+            older_than=older_than,
+            newer_than=newer_than,
+            limit=limit,
+            threaded=threaded,
+        ))
+
     def sent(self, older_than=None, newer_than=None,
              limit=None, threaded=None):
         """
