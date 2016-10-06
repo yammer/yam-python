@@ -18,12 +18,13 @@
 import os
 
 from setuptools import setup
+import yampy
 
-VERSION = "2.1"
+VERSION = yampy.__version__
 
 def readme():
     """ Load the contents of the README file """
-    readme_path = os.path.join(os.path.dirname(__file__), "README.txt")
+    readme_path = os.path.join(os.path.dirname(__file__), "README.md")
     with open(readme_path, "r") as f:
         return f.read()
 
@@ -37,7 +38,7 @@ setup(
     packages=["yampy", "yampy.apis"],
     install_requires=["requests"],
     license="Apache",
-    url="http://github.com/tonybaloney/yam-python",
+    url="http://github.com/tonybaloney/yampy2",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: Apache Software License",
