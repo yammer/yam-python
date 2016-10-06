@@ -1,5 +1,8 @@
 # Yampy2
 
+[![Documentation Status](https://readthedocs.org/projects/yampy2/badge/?version=latest)](http://yampy2.readthedocs.io/en/latest/?badge=latest)
+    
+
 Yampy 2 is a Python library extending the original official Yampy package with a number of improvements and updates.
 
 I created this project because the official package has not been updated in 3 years and pull-requests are not being merged. 
@@ -23,9 +26,8 @@ Or manually::
 
 ## Usage
 
-See the quickstart guide:
-http://pythonhosted.org/yampy/quickstart.html
-
+See the docs
+http://yampy2.readthedocs.io/en/latest/
 
 ## Contributing
 
