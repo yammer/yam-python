@@ -1,5 +1,4 @@
-Yampy2
-======
+# Yampy2
 
 Yampy 2 is a Python library extending the original official Yampy package with a number of improvements and updates.
 
@@ -22,15 +21,13 @@ Or manually::
     python setup.py install
 
 
-Usage
------
+## Usage
 
 See the quickstart guide:
 http://pythonhosted.org/yampy/quickstart.html
 
 
-Contributing
-------------
+## Contributing
 
 See the contributing guide:
 http://pythonhosted.org/yampy/contributing.html
