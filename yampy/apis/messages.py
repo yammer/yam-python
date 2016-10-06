@@ -195,6 +195,12 @@ class MessagesAPI(object):
             threaded=threaded,
         ))
 
+    def about_topic(self, topic_id):
+        """
+        Returns the messages about a topic
+        """
+        return self._client.get("/messages/about_topic/%d" % extract_id(topic_id))
+
     def find(self, message_id):
         """
         Returns the message identified by the given message_id.
