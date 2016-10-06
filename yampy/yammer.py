@@ -15,7 +15,8 @@
 # See the Apache Version 2.0 License for specific language governing
 # permissions and limitations under the License.
 
-from .apis import MessagesAPI, TopicsAPI, UsersAPI, GroupsAPI
+from .apis import (MessagesAPI, TopicsAPI, UsersAPI,
+                   GroupsAPI, RelationshipsAPI)
 from .client import Client
 
 
@@ -92,3 +93,13 @@ class Yammer(object):
         if not hasattr(self, "_groups_api"):
             self._groups_api = GroupsAPI(client=self._client)
         return self._groups_api
+
+    @property
+    def relationships(self):
+        """
+        Returns a :class:`yampy.apis.RelationshipsAPI` object which can be used to call
+        the Yammer API's relations endpoints.
+        """
+        if not hasattr(self, "_relationships_api"):
+            self._relationships_api = RelationshipsAPI(client=self._client)
+        return self._relationships_api

@@ -23,3 +23,4 @@ from .messages import MessagesAPI
 from .users import UsersAPI
 from .topics import TopicsAPI
 from .groups import GroupsAPI
+from .relationships import RelationshipsAPI
