@@ -29,10 +29,10 @@ class GroupsAPI(object):
         * mine -- Only return group of current user.
         * reverse -- return group in descending order by name.
         """
-        return self._client.get("/groups", **self._argument_converter(
+        return self._client.get("/search", **self._argument_converter(
             mine=mine,
             reverse=reverse,
-        ))
+        ))['groups']
 
     def find(self, group_id):
         """

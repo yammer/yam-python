@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: yampy2
-Version: 2.1
+Version: 2.1.1
 Summary: The (un)official Python client for Yammer's API
 Home-page: http://github.com/tonybaloney/yampy2
 Author: Yammer
