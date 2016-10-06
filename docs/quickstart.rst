@@ -122,6 +122,40 @@ property on your ``Yammer`` instance. These are just a few examples, see the
     yammer.users.suspend(a_user)
     yammer.users.delete(a_user)
 
+Groups
+~~~~~
+
+You can make `group-related requests using the ``groups``
+property on your ``Yammer`` instance. These are just a few examples, see the
+:class:`yampy.apis.GroupsAPI` class for details::
+
+    import yampy
+
+    yammer = yampy.Yammer(access_token=access_token)
+
+    # Get a list of all groups in your network
+    yammer.groups.all()
+    # Get a list of all groups of current user
+    yammer.groups.all(mine=True)
+
+    # View a specific group
+    yammer.groups.find(a_group_id)
+
+    # Get members of specific group
+    yammer.groups.members(a_group_id)
+
+    # Join a specific group
+    yammer.groups.join(a_group_id)
+
+    # Leave a specific group
+    yammer.groups.leave(a_group_id)
+
+    # Create a new group
+    yammer.groups.create("My new group", private=True)
+
+    # delete a group
+    yammer.groups.delete(a_group_id)
+
 Other API endpoints
 ~~~~~~~~~~~~~~~~~~~
 
