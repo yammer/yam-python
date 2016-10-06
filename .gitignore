@@ -3,5 +3,6 @@
 dist
 ENV
 MANIFEST
+build/
 yampy.egg-info
 docs/_build
