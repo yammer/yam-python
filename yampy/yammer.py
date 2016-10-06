@@ -15,7 +15,7 @@
 # See the Apache Version 2.0 License for specific language governing
 # permissions and limitations under the License.
 
-from .apis import MessagesAPI, UsersAPI
+from .apis import MessagesAPI, TopicsAPI, UsersAPI
 from .client import Client
 
 class Yammer(object):
@@ -60,6 +60,16 @@ class Yammer(object):
         if not hasattr(self, "_messages_api"):
             self._messages_api = MessagesAPI(client=self._client)
         return self._messages_api
+
+    @property
+    def topics(self):
+        """
+        Returns a :class:`yampy.apis.TopicsAPI` object which can be used to
+        call the Yammer API's topic-related endpoints.
+        """
+        if not hasattr(self, "_topics_api"):
+            self._topics_api = TopicsAPI(client=self._client)
+        return self._topics_api
 
     @property
     def users(self):
