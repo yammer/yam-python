@@ -19,7 +19,7 @@ import os
 
 from setuptools import setup
 
-VERSION = "2.0"
+VERSION = "2.1"
 
 def readme():
     """ Load the contents of the README file """
