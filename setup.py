@@ -19,7 +19,7 @@ import os
 
 from setuptools import setup
 
-VERSION = "1.0"
+VERSION = "2.0"
 
 def readme():
     """ Load the contents of the README file """
@@ -28,16 +28,16 @@ def readme():
         return f.read()
 
 setup(
-    name="yampy",
+    name="yampy2",
     version=VERSION,
-    description="The official Python client for Yammer's API",
+    description="The (un)official Python client for Yammer's API",
     author="Yammer",
-    author_email="blyttle@yammer-inc.com",
+    author_email="anthonyshaw@apache.org",
     long_description=readme(),
     packages=["yampy", "yampy.apis"],
     install_requires=["requests"],
     license="Apache",
-    url="http://github.com/yammer/yam-python",
+    url="http://github.com/tonybaloney/yam-python",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: Apache Software License",
