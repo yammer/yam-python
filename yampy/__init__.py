@@ -22,3 +22,5 @@ The official Python client for Yammer's API
 from .authenticator import Authenticator
 from .client import Client
 from .yammer import Yammer
+
+__version__ = '2.1'
