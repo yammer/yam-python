@@ -103,3 +103,11 @@ class Yammer(object):
         if not hasattr(self, "_relationships_api"):
             self._relationships_api = RelationshipsAPI(client=self._client)
         return self._relationships_api
+
+    def current_network(self, include_suspended=None):
+        """
+        Get details on the networks available to this user
+        """
+        return self._client.get("/networks/current", **self._argument_converter(
+            include_suspended=include_suspended
+        ))
