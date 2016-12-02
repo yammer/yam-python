@@ -34,7 +34,7 @@ setup(
     description="The (un)official Python client for Yammer's API",
     author="Yammer",
     author_email="anthonyshaw@apache.org",
-    long_description=readme(),
+    long_description="Yammer API client",
     packages=["yampy", "yampy.apis"],
     install_requires=["requests"],
     license="Apache",
