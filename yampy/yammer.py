@@ -27,7 +27,7 @@ class Yammer(object):
     method returns a ``MessagesAPI`` object.
     """
 
-    def __init__(self, access_token=None, base_url=None):
+    def __init__(self, access_token=None, base_url=None, proxies=None):
         """
         Initialize a new Yammer instance.
 
@@ -36,8 +36,9 @@ class Yammer(object):
         * ``base_url`` defaults to the live Yammer API. Provide a different
           base URL to make requests against some other server, e.g. a fake
           in your application's test suite.
+        * ``proxies`` proxy configuration that is passed to the client.
         """
-        self._client = Client(access_token=access_token, base_url=base_url)
+        self._client = Client(access_token=access_token, base_url=base_url, proxies=proxies)
 
     @property
     def client(self):

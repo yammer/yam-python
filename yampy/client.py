@@ -28,10 +28,11 @@ class Client(object):
     A client for the Yammer API.
     """
 
-    def __init__(self, access_token=None, base_url=None):
+    def __init__(self, access_token=None, base_url=None, proxies=None):
         self._access_token = access_token
         self._base_url = base_url or DEFAULT_BASE_URL
-
+        self._proxies = proxies
+        
     def get(self, path, **kwargs):
         """
         Makes an HTTP GET request to the Yammer API. Any keyword arguments will
@@ -72,6 +73,7 @@ class Client(object):
             method=method,
             url=self._build_url(path),
             headers=self._build_headers(),
+            proxies=self._proxies,
             params=kwargs,
         )
         return self._parse_response(response)
