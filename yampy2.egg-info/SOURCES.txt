@@ -1,4 +1,6 @@
 MANIFEST.in
+README
+setup.cfg
 setup.py
 yampy/__init__.py
 yampy/authenticator.py
