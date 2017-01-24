@@ -24,6 +24,7 @@ from .constants import DEFAULT_OAUTH_BASE_URL, DEFAULT_OAUTH_DIALOG_URL
 from .client import Client
 from .errors import ResponseError
 
+
 class Authenticator(object):
     """
     Responsible for authenticating users against the Yammer API.

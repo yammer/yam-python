@@ -15,7 +15,12 @@
 # See the Apache Version 2.0 License for specific language governing
 # permissions and limitations under the License.
 
-import requests
+try:
+    import requests
+except ImportError:
+    import warnings
+    warnings.warn("Missing requests package")
+    HAS_REQUESTS = False
 
 from .constants import DEFAULT_BASE_URL
 from .errors import ResponseError, NotFoundError, InvalidAccessTokenError, \

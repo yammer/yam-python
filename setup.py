@@ -57,6 +57,6 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'],
-    tests_require=["nose", "mock", "flask"],
+    tests_require=["nose", "mock", "flask", "requests"],
     test_suite="nose.collector",
 )
