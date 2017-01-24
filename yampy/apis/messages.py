@@ -21,6 +21,15 @@ from yampy.apis.utils import ArgumentConverter, IDExtractor, flatten_lists, \
 from yampy.models import extract_id
 
 
+def merge_messages(messages, more_messages):
+    if messages is None:
+        return more_messages
+    m = more_messages
+    m['messages'] = m['messages'] + messages['messages']
+    m['references'] = m['references'] + messages['references']
+    return m
+
+
 class MessagesAPI(object):
     """
     Provides an interface for accessing the message related endpoints of the
@@ -56,12 +65,10 @@ class MessagesAPI(object):
           each thread, or to ``"extended"`` to recieve the first and two newest
           messages from each thread.
         """
-        return self._client.get("/messages", **self._argument_converter(
-            older_than=older_than,
-            newer_than=newer_than,
-            limit=limit,
-            threaded=threaded,
-        ))
+        return self._get_paged_messages("/messages",
+                                        older_than,
+                                        newer_than,
+                                        limit, threaded)
 
     def from_my_feed(self, older_than=None, newer_than=None,
                      limit=None, threaded=None):
@@ -72,12 +79,10 @@ class MessagesAPI(object):
 
         See the :meth:`all` method for a description of the keyword arguments.
         """
-        return self._client.get("/messages/my_feed", **self._argument_converter(
-            older_than=older_than,
-            newer_than=newer_than,
-            limit=limit,
-            threaded=threaded,
-        ))
+        return self._get_paged_messages("/messages/my_feed",
+                                        older_than,
+                                        newer_than,
+                                        limit, threaded)
 
     def from_top_conversations(self, older_than=None, newer_than=None,
                                limit=None, threaded=None):
@@ -86,12 +91,11 @@ class MessagesAPI(object):
 
         See the :meth:`all` method for a description of the keyword arguments.
         """
-        return self._client.get("/messages/algo", **self._argument_converter(
-            older_than=older_than,
-            newer_than=newer_than,
-            limit=limit,
-            threaded=threaded,
-        ))
+        return self._get_paged_messages("/messages/algo",
+                                        older_than,
+                                        newer_than,
+                                        limit, threaded)
+    
 
     def from_followed_conversations(self, older_than=None, newer_than=None,
                                     limit=None, threaded=None):
@@ -101,12 +105,10 @@ class MessagesAPI(object):
 
         See the :meth:`all` method for a description of the keyword arguments.
         """
-        return self._client.get("/messages/following", **self._argument_converter(
-            older_than=older_than,
-            newer_than=newer_than,
-            limit=limit,
-            threaded=threaded,
-        ))
+        return self._get_paged_messages("/messages/following",
+                                        older_than,
+                                        newer_than,
+                                        limit, threaded)
 
     def from_group(self, group_id, older_than=None, newer_than=None,
                    limit=None, threaded=None):
@@ -116,12 +118,8 @@ class MessagesAPI(object):
         See the :meth:`all` method for a description of the keyword arguments.
         """
         path = "/messages/in_group/%d" % extract_id(group_id)
-        return self._client.get(path, **self._argument_converter(
-            older_than=older_than,
-            newer_than=newer_than,
-            limit=limit,
-            threaded=threaded,
-        ))
+        return self._get_paged_messages(path, older_than, newer_than,
+                                        limit, threaded)
 
     def sent(self, older_than=None, newer_than=None,
              limit=None, threaded=None):
@@ -130,12 +128,10 @@ class MessagesAPI(object):
 
         See the :meth:`all` method for a description of the keyword arguments.
         """
-        return self._client.get("/messages/sent", **self._argument_converter(
-            older_than=older_than,
-            newer_than=newer_than,
-            limit=limit,
-            threaded=threaded,
-        ))
+        return self._get_paged_messages("/messages/sent",
+                                        older_than,
+                                        newer_than,
+                                        limit, threaded)
 
     def private(self, older_than=None, newer_than=None,
                 limit=None, threaded=None):
@@ -144,12 +140,10 @@ class MessagesAPI(object):
 
         See the :meth:`all` method for a description of the keyword arguments.
         """
-        return self._client.get("/messages/private", **self._argument_converter(
-            older_than=older_than,
-            newer_than=newer_than,
-            limit=limit,
-            threaded=threaded,
-        ))
+        return self._get_paged_messages("/messages/private",
+                                        older_than,
+                                        newer_than,
+                                        limit, threaded)
 
     def received(self, older_than=None, newer_than=None,
                  limit=None, threaded=None):
@@ -158,12 +152,10 @@ class MessagesAPI(object):
 
         See the :meth:`all` method for a description of the keyword arguments.
         """
-        return self._client.get("/messages/received", **self._argument_converter(
-            older_than=older_than,
-            newer_than=newer_than,
-            limit=limit,
-            threaded=threaded,
-        ))
+        return self._get_paged_messages("/messages/received",
+                                        older_than,
+                                        newer_than,
+                                        limit, threaded)
 
     def in_thread(self, thread_id, older_than=None, newer_than=None,
                   limit=None, threaded=None):
@@ -173,12 +165,10 @@ class MessagesAPI(object):
         See the :meth:`all` method for a description of the keyword arguments.
         """
         path = "/messages/in_thread/%d" % extract_id(thread_id)
-        return self._client.get(path, **self._argument_converter(
-            older_than=older_than,
-            newer_than=newer_than,
-            limit=limit,
-            threaded=threaded,
-        ))
+        return self._get_paged_messages(path,
+                                        older_than,
+                                        newer_than,
+                                        limit, threaded)
 
     def from_user(self, user_id, older_than=None, newer_than=None,
                   limit=None, threaded=None):
@@ -188,24 +178,30 @@ class MessagesAPI(object):
         See the :meth:`all` method for a description of the keyword arguments.
         """
         path = "/messages/from_user/%d" % extract_id(user_id)
-        return self._client.get(path, **self._argument_converter(
-            older_than=older_than,
-            newer_than=newer_than,
-            limit=limit,
-            threaded=threaded,
-        ))
+        return self._get_paged_messages(path,
+                                        older_than,
+                                        newer_than,
+                                        limit, threaded)
 
     def about_topic(self, topic_id):
         """
         Returns the messages about a topic
         """
-        return self._client.get("/messages/about_topic/%d" % extract_id(topic_id))
+        path = "/messages/about_topic/%d" % extract_id(topic_id)
+        return self._get_paged_messages(path,
+                                        older_than,
+                                        newer_than,
+                                        limit, threaded)
 
     def find(self, message_id):
         """
         Returns the message identified by the given message_id.
         """
-        return self._client.get("/messages/%d" % extract_id(message_id))
+        path = "/messages/%d" % extract_id(message_id)
+        return self._get_paged_messages(path,
+                                        older_than,
+                                        newer_than,
+                                        limit, threaded)
 
     def create(self, body, group_id=None, replied_to_id=None,
                direct_to_id=None, topics=[], broadcast=None,
@@ -289,3 +285,34 @@ class MessagesAPI(object):
         return self._client.post("/messages/email", **self._argument_converter(
             message_id=message_id,
         ))
+
+    def _get_paged_messages(self, path, older_than=None, newer_than=None,
+                            limit=None, threaded=None):
+        """
+        The message APIs are all the same, in that they return in the meta
+        'older_available', i.e. more pages to come.
+        This method will page out all historical data.
+        """
+        def _iter_messages(path, older_than=None, newer_than=None,
+                   limit=None, threaded=None):
+            messages = self._client.get(path, **self._argument_converter(
+                older_than=older_than,
+                newer_than=newer_than,
+                limit=limit,
+                threaded=threaded,
+            ))
+            return (messages['meta']['older_available'],
+                    messages,
+                    messages['messages'][-1:][0]['id'])
+        are_more = True
+        messages = None
+        while are_more:
+            are_more, more_messages, last_message = _iter_messages(
+                path,
+                older_than,
+                newer_than,
+                limit,
+                threaded)
+            older_than = last_message
+            messages = merge_messages(messages, more_messages)
+        return messages
