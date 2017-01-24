@@ -22,22 +22,22 @@ import yampy
 
 VERSION = yampy.__version__
 
-def readme():
-    """ Load the contents of the README file """
-    readme_path = os.path.join(os.path.dirname(__file__), "README.md")
-    with open(readme_path, "r") as f:
-        return f.read()
+with open('README.rst') as readme_file:
+    readme = readme_file.read()
+
+with open('HISTORY.rst') as history_file:
+    history = history_file.read()
 
 setup(
     name="yampy2",
     version=VERSION,
     description="The (un)official Python client for Yammer's API",
-    author="Yammer",
+    author="Anthony Shaw",
     author_email="anthonyshaw@apache.org",
-    long_description="Yammer API client",
+    long_description=readme + '\n\n' + history,
     packages=["yampy", "yampy.apis"],
     install_requires=["requests"],
-    license="Apache",
+    license="Apache License (2.0)",
     url="http://github.com/tonybaloney/yampy2",
     classifiers=[
         'Development Status :: 5 - Production/Stable',

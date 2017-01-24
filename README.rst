@@ -1,8 +1,17 @@
-# Yampy2
+===============================
+pluralsight
+===============================
 
-[![Documentation Status](https://readthedocs.org/projects/yampy2/badge/?version=latest)](http://yampy2.readthedocs.io/en/latest/?badge=latest)
-    
+.. image:: https://img.shields.io/pypi/v/yampy2.svg
+        :target: https://pypi.python.org/pypi/yampy2
 
+.. image:: https://img.shields.io/travis/tonybaloney/yampy2.svg
+        :target: https://travis-ci.org/tonybaloney/yampy2
+
+.. image:: https://readthedocs.org/projects/yampy2/badge/?version=latest
+        :target: https://readthedocs.org/projects/yampy2/?badge=latest
+        :alt: Documentation Status
+        
 Yampy 2 is a Python library extending the original official Yampy package with a number of improvements and updates.
 
 I created this project because the official package has not been updated in 3 years and pull-requests are not being merged. 
@@ -11,7 +20,8 @@ Yampy ("Yam Pie") is the official Python library for interacting with Yammer's
 API.
 
 
-## Installation
+Installation
+~~~~~~~~~~~~
 
 Install with pip::
 
@@ -24,12 +34,14 @@ Or manually::
     python setup.py install
 
 
-## Usage
+Usage
+~~~~~
 
 See the docs
 http://yampy2.readthedocs.io/en/latest/
 
-## Contributing
+Contributing
+~~~~~~~~~~~~
 
 See the contributing guide:
 http://pythonhosted.org/yampy/contributing.html
