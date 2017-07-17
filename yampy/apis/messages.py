@@ -198,10 +198,7 @@ class MessagesAPI(object):
         Returns the message identified by the given message_id.
         """
         path = "/messages/%d" % extract_id(message_id)
-        return self._get_paged_messages(path,
-                                        older_than,
-                                        newer_than,
-                                        limit, threaded)
+        return self._client.get(path)
 
     def create(self, body, group_id=None, replied_to_id=None,
                direct_to_id=None, topics=[], broadcast=None,
