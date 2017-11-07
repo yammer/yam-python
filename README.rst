@@ -9,7 +9,7 @@ pluralsight
         :target: https://travis-ci.org/tonybaloney/yampy2
 
 .. image:: https://readthedocs.org/projects/yampy2/badge/?version=latest
-        :target: https://readthedocs.org/projects/yampy2/?badge=latest
+        :target: http://yampy2.readthedocs.io/en/latest/
         :alt: Documentation Status
         
 Yampy 2 is a Python library extending the original official Yampy package with a number of improvements and updates.
