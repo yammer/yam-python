@@ -1,5 +1,5 @@
 ===============================
-pluralsight
+yampy2
 ===============================
 
 .. image:: https://img.shields.io/pypi/v/yampy2.svg
