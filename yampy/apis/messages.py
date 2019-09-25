@@ -301,7 +301,11 @@ class MessagesAPI(object):
                 limit=limit,
                 threaded=threaded,
             ))
-            return (messages['meta']['older_available'],
+            try:
+                older_available = messages['meta']['older_available']
+            except KeyError:
+                older_available = False
+            return (older_available,
                     messages,
                     messages['messages'][-1:][0]['id'])
         are_more = True
