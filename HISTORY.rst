@@ -1,3 +1,9 @@
+2.6.0 - 25th September 2019
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Catch missing ``older_available`` property
+- Fix undefined parameters in ``about_topic`` and ``find``
+
 2.5.0 - 7th November 2017
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

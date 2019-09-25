@@ -95,7 +95,6 @@ class MessagesAPI(object):
                                         older_than,
                                         newer_than,
                                         limit, threaded)
-    
 
     def from_followed_conversations(self, older_than=None, newer_than=None,
                                     limit=None, threaded=None):

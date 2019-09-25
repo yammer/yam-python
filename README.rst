@@ -1,6 +1,6 @@
-===============================
+======
 yampy2
-===============================
+======
 
 .. image:: https://img.shields.io/pypi/v/yampy2.svg
         :target: https://pypi.python.org/pypi/yampy2
@@ -29,8 +29,8 @@ Install with pip::
 
 Or manually::
 
-    git clone git://github.com/tonybaloney/yam-python.git
-    cd yam-python
+    git clone git://github.com/tonybaloney/yampy2.git
+    cd yampy2
     python setup.py install
 
 
