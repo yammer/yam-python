@@ -23,4 +23,4 @@ from .authenticator import Authenticator
 from .client import Client
 from .yammer import Yammer
 
-__version__ = '2.5.0'
+__version__ = '2.6.0'
