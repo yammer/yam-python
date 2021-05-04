@@ -95,7 +95,6 @@ class MessagesAPI(object):
                                         older_than,
                                         newer_than,
                                         limit, threaded)
-    
 
     def from_followed_conversations(self, older_than=None, newer_than=None,
                                     limit=None, threaded=None):
@@ -189,16 +188,19 @@ class MessagesAPI(object):
         """
         path = "/messages/about_topic/%d" % extract_id(topic_id)
         return self._get_paged_messages(path,
-                                        older_than,
-                                        newer_than,
-                                        limit, threaded)
+                                        older_than=None,
+                                        newer_than=None,
+                                        limit=None, threaded=None)
 
     def find(self, message_id):
         """
         Returns the message identified by the given message_id.
         """
         path = "/messages/%d" % extract_id(message_id)
-        return self._client.get(path)
+        return self._get_paged_messages(path,
+                                        older_than=None,
+                                        newer_than=None,
+                                        limit=None, threaded=None)
 
     def create(self, body, group_id=None, replied_to_id=None,
                direct_to_id=None, topics=[], broadcast=None,
@@ -298,7 +300,11 @@ class MessagesAPI(object):
                 limit=limit,
                 threaded=threaded,
             ))
-            return (messages['meta']['older_available'],
+            try:
+                older_available = messages['meta']['older_available']
+            except KeyError:
+                older_available = False
+            return (older_available,
                     messages,
                     messages['messages'][-1:][0]['id'])
         are_more = True
