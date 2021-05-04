@@ -204,7 +204,7 @@ class MessagesAPI(object):
 
     def create(self, body, group_id=None, replied_to_id=None,
                direct_to_id=None, topics=[], broadcast=None,
-               open_graph_object={}):
+               open_graph_object={}, files=None):
         """
         Posts a new message to Yammer. Returns the new message in the same
         format as the various message listing methods (:meth:`all`,
@@ -231,6 +231,9 @@ class MessagesAPI(object):
            * ``site_name``
            * ``fetch`` (set to ``True`` to derive other OG data from the URL)
            * ``meta`` (for custom structured data)
+        * ``files`` -- A dict containing files to attach to the message.
+          the keys shold be ``attachment1`` to ``attachment20``.  The values
+          should be open file objects
         """
         if len(topics) > 20:
             raise TooManyTopicsError("Too many topics, the maximum is 20")
@@ -238,14 +241,15 @@ class MessagesAPI(object):
         if len(open_graph_object) > 0 and "url" not in open_graph_object:
             raise InvalidOpenGraphObjectError("URL is required")
 
-        return self._client.post("/messages", **self._argument_converter(
-            body=body,
-            group_id=group_id,
-            replied_to_id=replied_to_id,
-            direct_to_id=direct_to_id,
-            topic=topics,
-            broadcast=broadcast,
-            og=open_graph_object,
+        return self._client.post("/messages", files=files,
+            **self._argument_converter(
+                body=body,
+                group_id=group_id,
+                replied_to_id=replied_to_id,
+                direct_to_id=direct_to_id,
+                topic=topics,
+                broadcast=broadcast,
+                og=open_graph_object,
         ))
 
     def delete(self, message_id):

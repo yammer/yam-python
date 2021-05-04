@@ -83,12 +83,16 @@ class Client(object):
         )
 
     def _request(self, method, path, **kwargs):
+        if 'files' in kwargs:
+            kwargs = kwargs.copy()
+        files = kwargs.pop('files', None)
         response = requests.request(
             method=method,
             url=self._build_url(path),
             headers=self._build_headers(),
             proxies=self._proxies,
             params=kwargs,
+            files=files,
         )
         return self._parse_response(response)
 
