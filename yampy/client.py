@@ -73,6 +73,15 @@ class Client(object):
         """
         return self._request("delete", path, **kwargs)
 
+    def request(self, method, path, **kwargs):
+        return requests.request(
+            method=method,
+            url=path,
+            headers=self._build_headers(),
+            proxies=self._proxies,
+            params=kwargs,
+        )
+
     def _request(self, method, path, **kwargs):
         response = requests.request(
             method=method,
