@@ -32,12 +32,11 @@ setup(
     version=VERSION,
     description="The official Python client for Yammer's API",
     author="Yammer",
-    author_email="yammer@microsoft.com",
     long_description=readme + '\n\n' + history,
     packages=["yampy", "yampy.apis"],
     install_requires=["requests"],
     license="Apache License (2.0)",
-    url="http://github.com/tonybaloney/yampy2",
+    url="http://github.com/yammer/yam-python",
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
@@ -55,6 +54,4 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'],
-    tests_require=["nose", "mock", "flask", "requests"],
-    test_suite="nose.collector",
 )

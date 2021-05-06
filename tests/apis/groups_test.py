@@ -1,35 +1,45 @@
 from mock import Mock
 
-from tests.support.unit import TestCaseWithMockClient
+from tests.support.unit import TestCaseWithMockClient, TestCase
 from yampy.apis import GroupsAPI
 
 
-class GroupsAPIAllTest(TestCaseWithMockClient):
+class GroupsAPIAllTest(TestCase):
 
     def setUp(self):
-        super(GroupsAPIAllTest, self).setUp()
+        self.mock_get_response = {
+            "groups": []
+        }
+        self.mock_post_response = Mock()
+        self.mock_delete_response = Mock()
+        self.mock_put_response = Mock()
+        self.mock_client = Mock()
+        self.mock_client.get.return_value = self.mock_get_response
+        self.mock_client.post.return_value = self.mock_post_response
+        self.mock_client.delete.return_value = self.mock_delete_response
+        self.mock_client.put.return_value = self.mock_put_response
         self.groups_api = GroupsAPI(client=self.mock_client)
 
     def test_all(self):
         groups = self.groups_api.all()
 
-        self.mock_client.get.assert_called_once_with("/groups")
-        self.assertEquals(self.mock_get_response, groups)
+        self.mock_client.get.assert_called_once_with("/search")
+        self.assertEquals(self.mock_get_response["groups"], groups)
 
     def test_all_with_reverse(self):
         groups = self.groups_api.all(reverse=True)
 
         self.mock_client.get.assert_called_once_with(
-            "/groups",
+            "/search",
             reverse="true",
         )
-        self.assertEquals(self.mock_get_response, groups)
+        self.assertEquals(self.mock_get_response["groups"], groups)
 
     def test_find_current(self):
         current_user_groups = self.groups_api.all(mine=True)
 
-        self.mock_client.get.assert_called_once_with("/groups", mine="true")
-        self.assertEquals(self.mock_get_response, current_user_groups)
+        self.mock_client.get.assert_called_once_with("/search", mine="true")
+        self.assertEquals(self.mock_get_response["groups"], current_user_groups)
 
 
 class GroupsAPIFindTest(TestCaseWithMockClient):

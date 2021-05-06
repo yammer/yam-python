@@ -306,11 +306,14 @@ class MessagesAPI(object):
             ))
             try:
                 older_available = messages['meta']['older_available']
-            except KeyError:
-                older_available = False
-            return (older_available,
+                return (older_available,
                     messages,
                     messages['messages'][-1:][0]['id'])
+            except KeyError:
+                return (False,
+                    messages,
+                    None)
+            
         are_more = True
         messages = None
         while are_more:

@@ -100,7 +100,7 @@ class TestCaseWithMockClient(TestCase):
     """
 
     def setUp(self):
-        self.mock_get_response = Mock()
+        self.mock_get_response = {}
         self.mock_post_response = Mock()
         self.mock_delete_response = Mock()
         self.mock_put_response = Mock()

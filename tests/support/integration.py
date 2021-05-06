@@ -144,7 +144,7 @@ class FakeYammerServer(object):
         return json.dumps({
             "messages": messages,
             "references": [],
-            "meta": [],
+            "meta": {'older_available': False},
         })
 
     def _message_dict(self, msg_id, body):

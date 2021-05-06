@@ -17,18 +17,28 @@
 
 from mock import Mock
 
-from tests.support.unit import TestCaseWithMockClient
+from tests.support.unit import TestCaseWithMockClient, TestCase
 from yampy.apis import MessagesAPI
 from yampy.errors import InvalidOpenGraphObjectError, TooManyTopicsError
 
 
-class MessagesAPIMessageListFetchingTest(TestCaseWithMockClient):
+class MessagesAPIMessageListFetchingTest(TestCase):
     """
     Tests all MessagesAPI methods associated with fetching lists of messages.
     """
 
     def setUp(self):
-        super(MessagesAPIMessageListFetchingTest, self).setUp()
+        self.mock_get_response = {
+            "messages": []
+        }
+        self.mock_post_response = Mock()
+        self.mock_delete_response = Mock()
+        self.mock_put_response = Mock()
+        self.mock_client = Mock()
+        self.mock_client.get.return_value = self.mock_get_response
+        self.mock_client.post.return_value = self.mock_post_response
+        self.mock_client.delete.return_value = self.mock_delete_response
+        self.mock_client.put.return_value = self.mock_put_response
         self.messages_api = MessagesAPI(client=self.mock_client)
 
     def test_all(self):
