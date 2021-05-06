@@ -139,7 +139,7 @@ class FakeYammerServer(object):
             self._process.join()
 
     def _message_list_json(self, count=1, first_id=1, body="Hello world"):
-        id_range = xrange(first_id, first_id + count)
+        id_range = range(first_id, first_id + count)
         messages = [self._message_dict(msg_id, body) for msg_id in id_range]
         return json.dumps({
             "messages": messages,
@@ -159,7 +159,7 @@ class FakeYammerServer(object):
 
     def _user_list_json(self, count=1, first_id=1,
                         first_name="John", last_name="Doe"):
-        id_range = xrange(first_id, first_id + count)
+        id_range = range(first_id, first_id + count)
         users = [self._user_dict(user_id, first_name, last_name) for user_id in id_range]
         return json.dumps(users)
 
@@ -199,7 +199,7 @@ class TestCaseWithFakeYammerServer(TestCase):
             self._fake_yammer_server.run_as_process()
         except:
             if hasattr(self, "_fake_yammer_server"):
-                self._fake_yammer_server.stop()
+                self._fake_yammer_server.stop_process()
             raise
 
     def tearDown(self):

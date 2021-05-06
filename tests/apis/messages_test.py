@@ -130,6 +130,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="Hello world",
         )
         self.assertEquals(self.mock_post_response, response)
@@ -144,6 +145,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="Hi there",
             group_id=123,
             replied_to_id=456,
@@ -160,6 +162,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="Hello world",
             group_id=123,
             replied_to_id=456,
@@ -174,6 +177,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="Hello world",
             replied_to_id=37,
         )
@@ -186,6 +190,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="Hi there",
             topic1="unit testing",
             topic2="yampy",
@@ -206,6 +211,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="This is a public service announcement",
             broadcast="true",
         )
@@ -221,6 +227,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="Google is a search engine",
             og_url="http://www.google.com",
             og_fetch="true",

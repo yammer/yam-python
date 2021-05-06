@@ -15,7 +15,6 @@
 # See the Apache Version 2.0 License for specific language governing
 # permissions and limitations under the License.
 
-import os
 
 from setuptools import setup
 import yampy
@@ -29,11 +28,11 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 setup(
-    name="yampy2",
+    name="yampy",
     version=VERSION,
-    description="The (un)official Python client for Yammer's API",
-    author="Anthony Shaw",
-    author_email="anthonyshaw@apache.org",
+    description="The official Python client for Yammer's API",
+    author="Yammer",
+    author_email="yammer@microsoft.com",
     long_description=readme + '\n\n' + history,
     packages=["yampy", "yampy.apis"],
     install_requires=["requests"],
@@ -50,11 +49,10 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'],
     tests_require=["nose", "mock", "flask", "requests"],
