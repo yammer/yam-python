@@ -15,7 +15,12 @@
 # See the Apache Version 2.0 License for specific language governing
 # permissions and limitations under the License.
 
-import requests
+try:
+    import requests
+except ImportError:
+    import warnings
+    warnings.warn("Missing requests package")
+    HAS_REQUESTS = False
 
 from .constants import DEFAULT_BASE_URL
 from .errors import ResponseError, NotFoundError, InvalidAccessTokenError, \
@@ -28,9 +33,10 @@ class Client(object):
     A client for the Yammer API.
     """
 
-    def __init__(self, access_token=None, base_url=None):
+    def __init__(self, access_token=None, base_url=None, proxies=None):
         self._access_token = access_token
         self._base_url = base_url or DEFAULT_BASE_URL
+        self._proxies = proxies
 
     def get(self, path, **kwargs):
         """
@@ -67,12 +73,26 @@ class Client(object):
         """
         return self._request("delete", path, **kwargs)
 
+    def request(self, method, path, **kwargs):
+        return requests.request(
+            method=method,
+            url=path,
+            headers=self._build_headers(),
+            proxies=self._proxies,
+            params=kwargs,
+        )
+
     def _request(self, method, path, **kwargs):
+        if 'files' in kwargs:
+            kwargs = kwargs.copy()
+        files = kwargs.pop('files', None)
         response = requests.request(
             method=method,
             url=self._build_url(path),
             headers=self._build_headers(),
+            proxies=self._proxies,
             params=kwargs,
+            files=files,
         )
         return self._parse_response(response)
 

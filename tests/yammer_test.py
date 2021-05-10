@@ -33,6 +33,7 @@ class YammerTest(TestCase):
         MockClient.assert_called_once_with(
             access_token="abc123",
             base_url=None,
+            proxies=None,
         )
         MockMessagesAPI.assert_called_once_with(
             client=MockClient(),
@@ -49,6 +50,7 @@ class YammerTest(TestCase):
         MockClient.assert_called_once_with(
             access_token="abc123",
             base_url=None,
+            proxies=None,
         )
         MockUsersAPI.assert_called_once_with(
             client=MockClient(),
@@ -63,5 +65,6 @@ class YammerTest(TestCase):
         MockClient.assert_called_once_with(
             access_token="thx1138",
             base_url=None,
+            proxies=None,
         )
         self.assertIsInstance(client, Client)

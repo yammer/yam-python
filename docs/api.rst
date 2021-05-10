@@ -24,11 +24,32 @@ MessagesAPI object
 .. autoclass:: MessagesAPI
    :members:
 
+RelationshipsAPI object
+-----------------------
+
+.. module:: yampy.apis
+.. autoclass:: RelationshipsAPI
+   :members:
+
 UsersAPI object
 ---------------
 
 .. module:: yampy.apis
 .. autoclass:: UsersAPI
+   :members:
+
+GroupsAPI object
+---------------
+
+.. module:: yampy.apis
+.. autoclass:: GroupsAPI
+   :members:
+
+TopicsAPI object
+----------------
+
+.. module:: yampy.apis
+.. autoclass:: TopicsAPI
    :members:
 
 Client object

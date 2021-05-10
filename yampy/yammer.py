@@ -15,10 +15,13 @@
 # See the Apache Version 2.0 License for specific language governing
 # permissions and limitations under the License.
 
-from .apis import MessagesAPI, UsersAPI
+from .apis import (MessagesAPI, ThreadsAPI, TopicsAPI, UsersAPI,
+                   GroupsAPI, RelationshipsAPI)
 from .client import Client
 
+
 class Yammer(object):
+
     """
     Main entry point for accessing the Yammer API.
 
@@ -27,7 +30,7 @@ class Yammer(object):
     method returns a ``MessagesAPI`` object.
     """
 
-    def __init__(self, access_token=None, base_url=None):
+    def __init__(self, access_token=None, base_url=None, proxies=None):
         """
         Initialize a new Yammer instance.
 
@@ -37,7 +40,7 @@ class Yammer(object):
           base URL to make requests against some other server, e.g. a fake
           in your application's test suite.
         """
-        self._client = Client(access_token=access_token, base_url=base_url)
+        self._client = Client(access_token=access_token, base_url=base_url, proxies=proxies)
 
     @property
     def client(self):
@@ -62,6 +65,26 @@ class Yammer(object):
         return self._messages_api
 
     @property
+    def threads(self):
+        """
+        Returns a :class:`yampy.apis.ThreadsAPI` object which can be used to
+        call the Yammer API's thread-related endpoints.
+        """
+        if not hasattr(self, "_threads_api"):
+            self._threads_api = ThreadsAPI(client=self._client)
+        return self._threads_api
+
+    @property
+    def topics(self):
+        """
+        Returns a :class:`yampy.apis.TopicsAPI` object which can be used to
+        call the Yammer API's topic-related endpoints.
+        """
+        if not hasattr(self, "_topics_api"):
+            self._topics_api = TopicsAPI(client=self._client)
+        return self._topics_api
+
+    @property
     def users(self):
         """
         Returns a :class:`yampy.apis.UsersAPI` object which can be used to call
@@ -70,3 +93,31 @@ class Yammer(object):
         if not hasattr(self, "_users_api"):
             self._users_api = UsersAPI(client=self._client)
         return self._users_api
+
+    @property
+    def groups(self):
+        """
+        Returns a :class:`yampy.apis.GroupsAPI` object which can be used to call
+        the Yammer API's user-related endpoints.
+        """
+        if not hasattr(self, "_groups_api"):
+            self._groups_api = GroupsAPI(client=self._client)
+        return self._groups_api
+
+    @property
+    def relationships(self):
+        """
+        Returns a :class:`yampy.apis.RelationshipsAPI` object which can be used to call
+        the Yammer API's relations endpoints.
+        """
+        if not hasattr(self, "_relationships_api"):
+            self._relationships_api = RelationshipsAPI(client=self._client)
+        return self._relationships_api
+
+    def current_network(self, include_suspended=None):
+        """
+        Get details on the networks available to this user
+        """
+        return self._client.get("/networks/current", **self._argument_converter(
+            include_suspended=include_suspended
+        ))

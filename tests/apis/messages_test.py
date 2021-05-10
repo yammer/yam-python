@@ -17,18 +17,28 @@
 
 from mock import Mock
 
-from tests.support.unit import TestCaseWithMockClient
+from tests.support.unit import TestCaseWithMockClient, TestCase
 from yampy.apis import MessagesAPI
 from yampy.errors import InvalidOpenGraphObjectError, TooManyTopicsError
 
 
-class MessagesAPIMessageListFetchingTest(TestCaseWithMockClient):
+class MessagesAPIMessageListFetchingTest(TestCase):
     """
     Tests all MessagesAPI methods associated with fetching lists of messages.
     """
 
     def setUp(self):
-        super(MessagesAPIMessageListFetchingTest, self).setUp()
+        self.mock_get_response = {
+            "messages": []
+        }
+        self.mock_post_response = Mock()
+        self.mock_delete_response = Mock()
+        self.mock_put_response = Mock()
+        self.mock_client = Mock()
+        self.mock_client.get.return_value = self.mock_get_response
+        self.mock_client.post.return_value = self.mock_post_response
+        self.mock_client.delete.return_value = self.mock_delete_response
+        self.mock_client.put.return_value = self.mock_put_response
         self.messages_api = MessagesAPI(client=self.mock_client)
 
     def test_all(self):
@@ -130,6 +140,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="Hello world",
         )
         self.assertEquals(self.mock_post_response, response)
@@ -144,6 +155,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="Hi there",
             group_id=123,
             replied_to_id=456,
@@ -160,6 +172,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="Hello world",
             group_id=123,
             replied_to_id=456,
@@ -174,6 +187,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="Hello world",
             replied_to_id=37,
         )
@@ -186,6 +200,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="Hi there",
             topic1="unit testing",
             topic2="yampy",
@@ -206,6 +221,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="This is a public service announcement",
             broadcast="true",
         )
@@ -221,6 +237,7 @@ class MessagesAPICreateTest(TestCaseWithMockClient):
 
         self.mock_client.post.assert_called_once_with(
             "/messages",
+            files=None,
             body="Google is a search engine",
             og_url="http://www.google.com",
             og_fetch="true",

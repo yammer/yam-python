@@ -15,34 +15,43 @@
 # See the Apache Version 2.0 License for specific language governing
 # permissions and limitations under the License.
 
-import os
 
 from setuptools import setup
+import yampy
 
-VERSION = "1.0"
+VERSION = yampy.__version__
 
-def readme():
-    """ Load the contents of the README file """
-    readme_path = os.path.join(os.path.dirname(__file__), "README.txt")
-    with open(readme_path, "r") as f:
-        return f.read()
+with open('README.rst') as readme_file:
+    readme = readme_file.read()
+
+with open('HISTORY.rst') as history_file:
+    history = history_file.read()
 
 setup(
     name="yampy",
     version=VERSION,
     description="The official Python client for Yammer's API",
     author="Yammer",
-    author_email="blyttle@yammer-inc.com",
-    long_description=readme(),
+    long_description=readme + '\n\n' + history,
     packages=["yampy", "yampy.apis"],
     install_requires=["requests"],
-    license="Apache",
+    license="Apache License (2.0)",
     url="http://github.com/yammer/yam-python",
     classifiers=[
-        "Development Status :: 3 - Alpha",
-        "License :: OSI Approved :: Apache Software License",
-    ],
-
-    tests_require=["nose", "mock", "flask"],
-    test_suite="nose.collector",
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Console',
+        'Intended Audience :: Developers',
+        'Intended Audience :: System Administrators',
+        'License :: OSI Approved :: Apache Software License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy'],
 )

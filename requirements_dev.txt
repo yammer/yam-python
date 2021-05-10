@@ -1,4 +1,4 @@
-nose
+pytest
 mock
 flask
 requests

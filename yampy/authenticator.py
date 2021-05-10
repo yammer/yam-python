@@ -24,6 +24,7 @@ from .constants import DEFAULT_OAUTH_BASE_URL, DEFAULT_OAUTH_DIALOG_URL
 from .client import Client
 from .errors import ResponseError
 
+
 class Authenticator(object):
     """
     Responsible for authenticating users against the Yammer API.
@@ -39,7 +40,7 @@ class Authenticator(object):
     """
 
     def __init__(self, client_id, client_secret,
-                 oauth_dialog_url=None, oauth_base_url=None):
+                 oauth_dialog_url=None, oauth_base_url=None, proxies=None):
         """
         Initializes a new Authenticator. The client_id and client_secret
         identify your application, you acquire them when registering your
@@ -53,11 +54,13 @@ class Authenticator(object):
           application. Used by the authorization_url method.
         * ``oauth_base_url`` -- The base URL for OAuth API requests, e.g. token
           exchange. Used by ``fetch_access_data`` or ``fetch_access_token``.
+        * ``proxies`` -- provide a proxies dictionary to be used by the client.
         """
         self._client_id = client_id
         self._client_secret = client_secret
         self._oauth_dialog_url = oauth_dialog_url or DEFAULT_OAUTH_DIALOG_URL
         self._oauth_base_url = oauth_base_url or DEFAULT_OAUTH_BASE_URL
+        self._proxies = proxies
 
     def authorization_url(self, redirect_uri):
         """
@@ -82,7 +85,7 @@ class Authenticator(object):
         If you only intend to make use of the token, you can use the
         ``fetch_access_token`` method instead for convenience.
         """
-        client = Client(base_url=self._oauth_base_url)
+        client = Client(base_url=self._oauth_base_url, proxies=self._proxies)
         return client.get(
             path="/access_token",
             client_id=self._client_id,
